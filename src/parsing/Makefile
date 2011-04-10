@@ -9,4 +9,4 @@ INCLUDES = utils prover_syntax symbexe_syntax
 RESULT = "$(LIB)/parsing"
 OCAMLLDFLAGS="-a"
 
-include ../Makefile.jstar
+include ../Makefile.corestar

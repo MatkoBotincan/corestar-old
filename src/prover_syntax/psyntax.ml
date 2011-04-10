@@ -1,5 +1,5 @@
 (********************************************************
-   This file is part of jStar
+   This file is part of coreStar
         src/prover_syntax/psyntax.ml
    Release
         $Release$
@@ -7,13 +7,12 @@
         $Rev$
    $Copyright$
 
-   jStar is distributed under a BSD license,  see,
+   coreStar is distributed under a BSD license,  see,
       LICENSE.txt
  ********************************************************)
 
 (******************************************************************
     Syntax for Separation logic theorem prover
-
 *******************************************************************)
 
 

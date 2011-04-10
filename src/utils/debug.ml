@@ -1,5 +1,5 @@
 (********************************************************
-   This file is part of jStar
+   This file is part of coreStar
         src/utils/debug.ml
    Release
         $Release$
@@ -7,12 +7,12 @@
         $Rev$
    $Copyright$
 
-   jStar is distributed under a BSD license,  see,
+   coreStar is distributed under a BSD license,  see,
       LICENSE.txt
  ********************************************************)
 
 (*
- * Debug helpers. The code of jStar supports debugging in two ways. First, by
+ * Debug helpers. The code of coreStar supports debugging in two ways. First, by
  * setting [safe] mode (possibly expensive) sanity checks are run. (There is no
  * reason to ever turn off cheap sanity checks.) Second, the code is
  * interspersed with dumps of various state information. For logging, however,

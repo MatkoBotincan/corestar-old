@@ -1,26 +1,24 @@
-The jStar Verification System
-=============================
+The coreStar Verification System
+================================
 
-jStar is a highly-customisable automatic verification tool based on separation
-logic aiming at object-oriented programs written in Java.
+coreStar is a highly-customisable automatic generic core symbolic execution 
+engine for analysis and verification with separation logic.
 
 There is a tutorial for the tool here:
-   ./doc/tutorial/jstartut.pdf
+   ./doc/tutorial/corestartut.pdf
 
 For more information, see http://www.jstarverifier.org
 
 
 
-Building on *nix / Mac OSX
----------------------------
+Building on *nix / Mac OSX / Cygwin
+-----------------------------------
 
 Use the standard incantation.
   ./configure --prefix DIR
   make
   make install
 
-Then run.
-  DIR/jstar
 
 Dependencies:
 
@@ -30,8 +28,8 @@ Dependencies:
 
 
 
-Building on Win32
------------------
+Building on Win32 (native)
+--------------------------
 
 Open the Visual Studio Command Prompt. 
  - If you obtained Microsoft tools not as a part of Visual Studio, just open
@@ -48,11 +46,11 @@ Check that the make tool is in path.
 To run the build process, call: 
   make build
 
-To set the environment variables necessary for jStar to run:
-  setjstarenv.bat
+To set the environment variables necessary for coreStar to run:
+  set_corestar_env.bat
 
 After the build process has finished, you may have to add extension .exe to
-compiled binaries located in jStar's bin subdirectory.
+compiled binaries located in coreStar's bin subdirectory.
 
 
 Dependencies:

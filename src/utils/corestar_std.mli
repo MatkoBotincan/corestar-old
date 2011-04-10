@@ -1,15 +1,16 @@
 (********************************************************
-   This file is part of jStar
-        src/utils/jstar_std.mli
+   This file is part of coreStar
+        src/utils/corestar_std.mli
    Release
         $Release$
    Version
         $Rev$
    $Copyright$
 
-   jStar is distributed under a BSD license,  see,
+   coreStar is distributed under a BSD license,  see,
       LICENSE.txt
  ********************************************************)
+
 
 (** Contains utilities that we'd like to have had in OCaml's stdlib. *)
 

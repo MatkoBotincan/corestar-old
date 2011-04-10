@@ -1,5 +1,5 @@
 (********************************************************
-   This file is part of jStar
+   This file is part of coreStar
         src/utils/system.ml
    Release
         $Release$
@@ -7,12 +7,12 @@
         $Rev$
    $Copyright$
 
-   jStar is distributed under a BSD license,  see,
+   coreStar is distributed under a BSD license,  see,
       LICENSE.txt
  ********************************************************)
 
 open Debug
-open Jstar_std
+open Corestar_std
 
 let java_path_delimiter = if Sys.os_type = "Windows" then ";" else ":"
 let java_path_delimiter_re = Str.regexp (java_path_delimiter ^ "+")

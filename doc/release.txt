@@ -1,11 +1,10 @@
 All UNIX releases *must* conform to what experienced users expect.
-  tar xaf jstar-VERSION.tar.bz2
-  cd jstar-VERSION
+  tar xaf corestar-VERSION.tar.bz2
+  cd corestar-VERSION
   ./configure --prefix=HOME # may fail with 'Install such and such.'
   make
   make test
   make install # may fail due to file permissions, but should always work as root
-  HOME/bin/jstar
 
 The commands above may fail only if at least one of these holds:
  1. Reasonable versions of bash, tar, bunzip2, bash, GNU Make are

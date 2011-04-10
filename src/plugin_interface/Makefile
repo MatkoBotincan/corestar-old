@@ -8,4 +8,4 @@ INCLUDES = prover_syntax utils
 RESULT = "$(LIB)/plugin_interface"
 OCAMLLDFLAGS="-a"
 
-include ../Makefile.jstar
+include ../Makefile.corestar

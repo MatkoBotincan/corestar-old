@@ -1,5 +1,5 @@
 (********************************************************
-   This file is part of jStar
+   This file is part of coreStar
         src/symbexe/specification.ml
    Release
         $Release$
@@ -7,7 +7,7 @@
         $Rev$
    $Copyright$
 
-   jStar is distributed under a BSD license,  see,
+   coreStar is distributed under a BSD license,  see,
       LICENSE.txt
  ********************************************************)
 
@@ -15,7 +15,7 @@
 
 (** Support functions for symbolic execution and misc conversion facilities. *)
 
-open Jstar_std
+open Corestar_std
 open Psyntax
 open Sepprover
 open Spec

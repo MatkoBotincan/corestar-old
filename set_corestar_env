@@ -1,4 +1,2 @@
-export JSTAR_HOME=`pwd`
-
+export CORESTAR_HOME=`pwd`
 export PATH=`pwd`/bin:$PATH
-

@@ -9,4 +9,4 @@ INCLUDES = utils prover_syntax plugin_interface
 RESULT = "$(LIB)/prover"
 OCAMLLDFLAGS="-a"
 
-include ../Makefile.jstar
+include ../Makefile.corestar

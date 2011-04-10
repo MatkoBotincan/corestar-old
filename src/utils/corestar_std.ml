@@ -1,3 +1,17 @@
+(********************************************************
+   This file is part of coreStar
+        src/utils/corestar_std.mli
+   Release
+        $Release$
+   Version
+        $Rev$
+   $Copyright$
+
+   coreStar is distributed under a BSD license,  see,
+      LICENSE.txt
+ ********************************************************)
+
+
 module Int = struct type t = int let compare = compare end
 module StringSet = Set.Make (String)
 module IntSet = Set.Make (Int)

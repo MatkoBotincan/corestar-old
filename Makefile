@@ -1,7 +1,7 @@
-ifndef JSTAR_HOME
-	JSTAR_HOME=$(CURDIR)
+ifndef CORESTAR_HOME
+	CORESTAR_HOME=$(CURDIR)
 endif
-export JSTAR_HOME
+export CORESTAR_HOME
 
 build:
 	$(MAKE) -C src

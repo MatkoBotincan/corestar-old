@@ -1,3 +1,0 @@
-rule recover_access:
-  | access(?c, S(?x)) * iterator(?i, {c=?c}) |- access(?c, ?x)
-if

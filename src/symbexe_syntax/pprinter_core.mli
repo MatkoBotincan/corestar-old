@@ -1,5 +1,5 @@
 (********************************************************
-   This file is part of jStar
+   This file is part of coreStar
         src/symbexe_syntax/pprinter_core.mli
    Release
         $Release$
@@ -7,7 +7,7 @@
         $Rev$
    $Copyright$
 
-   jStar is distributed under a BSD license,  see,
+   coreStar is distributed under a BSD license,  see,
       LICENSE.txt
  ********************************************************)
 

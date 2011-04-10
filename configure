@@ -64,7 +64,6 @@ fi
 # Generate install target {{{
 echo "install: build" > .install.mk
 inst "-d $PREFIX/bin"
-inst "-m=rx bin/jstar $PREFIX/bin"
 for d in `find library -type d`; do inst "-d $PREFIX/$d"; done
 for f in `find library -type f`; do inst "-m=r $f $PREFIX/$f"; done
 # }}}

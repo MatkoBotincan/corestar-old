@@ -1,4 +1,4 @@
-(** Run from the root directory of jStar. *)
+(** Run from the root directory of coreStar. *)
 
 let _ =
   let src_dirs = "src" :: Utils.files_map Sys.is_directory (fun x->x) "src" in
