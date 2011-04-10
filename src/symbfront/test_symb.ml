@@ -60,8 +60,8 @@ let main () : unit =
 
     let question_list = 
       System.parse_file 
-          Jparser.symb_test_file 
-          Jlexer.token 
+          Parser.symb_test_file 
+          Lexer.token 
           !question_file_name 
           "Test" in
     List.iter (

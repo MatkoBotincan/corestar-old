@@ -4,7 +4,6 @@ endif
 export LIB
 
 SOURCES = specification.ml symexec.ml 
-   # abduction.ml
 INCLUDES = utils prover_syntax symbexe_syntax prover 
 RESULT = "$(LIB)/symbexe"
 OCAMLLDFLAGS="-a"

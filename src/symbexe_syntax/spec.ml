@@ -16,23 +16,19 @@
   Also, their pretty-printing. *)
 
 module ClassMap = Map.Make (struct type t = string let compare = compare end)
-module LabelMap = Map.Make (struct type t = string let compare = compare end)
 
 type excep_post = Psyntax.pform ClassMap.t 
-type invariants = Psyntax.pform LabelMap.t
 
 type spec = 
     { pre : Psyntax.pform;
       post : Psyntax.pform;
-      excep : excep_post;
-      invariants : invariants }
+      excep : excep_post }
 
 
-let mk_spec pre post excep invariants = 
+let mk_spec pre post excep = 
     { pre = pre;
       post = post;
-      excep = excep;
-      invariants = invariants }
+      excep = excep }
 
 let spec2str ppf (spec: spec)  = 
   let po s = Format.fprintf ppf "@\n@[<4>{%a}@]" Psyntax.string_form s in

@@ -59,7 +59,7 @@ let main () : unit =
     let abs_rules = {empty_logic with seq_rules = l1; rw_rules = l2; consdecl = cn} in
     
     if !abduct_logic_file_name="" then
-      let question_list = System.parse_file Jparser.symb_question_file Jlexer.token !question_file_name "Question" in
+      let question_list = System.parse_file Parser.symb_question_file Lexer.token !question_file_name "Question" in
       List.iter (
       fun question ->
         match question with 
@@ -72,7 +72,7 @@ let main () : unit =
     else
       let l1,l2,cn = load_logic !abduct_logic_file_name in
       let abduct_lo = {empty_logic with seq_rules=l1; rw_rules=l2; consdecl=cn} in
-      let question_list = System.parse_file Jparser.symb_question_file Jlexer.token !question_file_name "Question" in
+      let question_list = System.parse_file Parser.symb_question_file Lexer.token !question_file_name "Question" in
       List.iter (
       fun question ->
         match question with 

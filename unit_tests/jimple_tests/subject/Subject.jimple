@@ -1,8 +1,0 @@
-public interface  Subject extends java.lang.Object
-{
-/*Subject.java*/
-
-    public abstract void addObserver(Observer);
-
-    public abstract void removeObserver(Observer);
-}

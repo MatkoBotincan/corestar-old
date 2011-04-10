@@ -166,16 +166,6 @@ type test =
   | TEqual of pform * args * args * bool
   | TAbs of pform * pform
 val expand_equiv_rules : rules list -> rules list
-type inductive_con = {
-  con_name : string;
-  con_def : pform * string * args list;
-}
-type inductive = {
-  ind_name : string;
-  ind_args : args list;
-  ind_cons : inductive_con list;
-}
-type inductive_stmt = IndImport of string | IndDef of inductive
 type var = Vars.var
 type term = args
 type form = pform

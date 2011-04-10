@@ -33,9 +33,6 @@ let empty_inner_form_af =
 let conjunction_excep excep_post f1 =
   ClassMap.map (fun post -> Psyntax.pconjunction post f1) excep_post
 
-let conjunction_inv invs f1 =
-  LabelMap.map (fun inv -> Psyntax.pconjunction inv f1) invs
-
 let conjunction_excep_convert excep_post f1 =
   ClassMap.map (fun post -> Sepprover.conjoin post f1) excep_post
 
@@ -48,9 +45,6 @@ let combine_maps empty fold add find combine_values m1 m2 =
 let disjunction_excep = 
   combine_maps ClassMap.empty ClassMap.fold ClassMap.add ClassMap.find (curry mkOr)
 
-let disjunction_inv =
-  combine_maps LabelMap.empty LabelMap.fold LabelMap.add LabelMap.find (curry mkOr)
-
 let spec_conjunction spec1 spec2 =
   let var = Arg_var(Vars.freshe()) in
   let zero = Arg_string("**first**") in
@@ -58,12 +52,11 @@ let spec_conjunction spec1 spec2 =
   let eq = mkEQ(var,zero) in 
   let neq = mkEQ(var,one) in       
   match spec1,spec2 with 
-    {pre=pre1; post=post1; excep=excep1; invariants=inv1},
-    {pre=pre2; post=post2; excep=excep2; invariants=inv2} ->
+    {pre=pre1; post=post1; excep=excep1},
+    {pre=pre2; post=post2; excep=excep2} ->
       {pre= Psyntax.mkOr ((Psyntax.pconjunction pre1 eq),(Psyntax.pconjunction pre2 neq));
        post= Psyntax.mkOr ((Psyntax.pconjunction post1 eq),(Psyntax.pconjunction post2 neq));
-       excep = disjunction_excep (conjunction_excep excep1 eq) (conjunction_excep excep2 neq);
-       invariants = disjunction_inv (conjunction_inv inv1 eq) (conjunction_inv inv2 neq) }
+       excep = disjunction_excep (conjunction_excep excep1 eq) (conjunction_excep excep2 neq)}
 
 
 
@@ -96,8 +89,7 @@ let sub_spec  sub spec =
     {pre=pre; post=post; excep=excep} ->
       {pre=subst_pform sub pre;
        post=subst_pform sub post;
-       excep=ClassMap.map (subst_pform sub) excep;
-       invariants=LabelMap.empty}
+       excep=ClassMap.map (subst_pform sub) excep}
       
 let ev_spec spec = 
   match spec with

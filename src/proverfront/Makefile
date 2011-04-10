@@ -31,16 +31,12 @@ endif
 export LIB
 
 
-#external_interface.mli 
-#external_interface.ml  
-
 PROVERSOURCE = run.ml 
 
-#TESTPROVERSOURCE = $(CORESOURCE) logic_parser.mly logic_lexer.mll load_logic.ml test.ml
-TESTPROVERSOURCE = inductive.ml test.ml
+TESTPROVERSOURCE = test.ml
 
 
-DEFAULT_ARGS = LIBS="str unix dynlink utils prover_syntax plugin_interface prover symbexe_syntax jimple_syntax parsing" \
+DEFAULT_ARGS = LIBS="str unix dynlink utils prover_syntax plugin_interface prover symbexe_syntax parsing" \
        OCAMLLDFLAGS=" -I $(LIB)" \
        INCDIRS="../utils ../prover_syntax ../prover ../parsing ../plugin_interface"
        OCAMLFLAGS="" \

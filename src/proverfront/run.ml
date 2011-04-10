@@ -41,7 +41,7 @@ let main () =
     let l1,l2,cn = load_logic !logic_file_name in 
     let logic = {empty_logic with seq_rules = l1; rw_rules=l2; consdecl = cn} in
 (*    let s = System.string_of_file !program_file_name  in*)
-    let question_list = System.parse_file Jparser.question_file Jlexer.token !program_file_name "Questions" in
+    let question_list = System.parse_file Parser.question_file Lexer.token !program_file_name "Questions" in
 
     List.iter (
     fun question ->
