@@ -27,7 +27,6 @@ let arg_list = Config.args_default @
     ("-l", Arg.Set_string(logic_file_name), "logic file name" ); ]
 
 
-
 let main () =
   let usage_msg="Usage: -f <test_file_name> -l <logic_file_name>" in 
   Arg.parse arg_list (fun s ->()) usage_msg;

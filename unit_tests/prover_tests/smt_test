@@ -23,11 +23,11 @@ Implication:
 ? True 
 
 Implication: 
-  |- (x + builtin_mult(k,x)) = builtin_mult((k + 1), x)
+  |- (x + builtin_mult(k,x)) = builtin_mult((k + "1"), x)
 ? True 
 
 Implication:  
-  |- ((x + x) + builtin_mult(k,x)) = builtin_mult((k + 2), x)
+  |- ((x + x) + builtin_mult(k,x)) = builtin_mult((k + "2"), x)
 ? True 
 
 Implication:
@@ -35,7 +35,7 @@ Implication:
 ? True
 
 Implication:
-  | (_i_3524+"1")=_i_8098 * ("0"+"1")=_i_3524 * @parameter0:=M * 
+  (_i_3524+"1")=_i_8098 * ("0"+"1")=_i_3524 * @parameter0:=M * 
     i=(_i_8098+"1") * !LE(i, M) * !LE("0", M) * !LE("0", M) * !LT("0", M)
   |- i=_i_8098 * !LE(_i_3524, M) * !LT(_i_3524, M)
 ? False

@@ -94,29 +94,31 @@ let report_error = function
 
 (* ====================================================================== *)
 
-let  all = _
-
 let  dec_digit = ['0' - '9']
 
 let  not_cr_lf = [ ^ '\010' '\013']
 
 let  alpha_char = ['a' - 'z'] | ['A' - 'Z']
   
-let  simple_id_char = alpha_char | dec_digit | '_' | '$'
+let  simple_id_char = alpha_char | dec_digit | '_' | '.' | '$'
 
-let  first_id_char = alpha_char | '_' | '$' | '@'
+let  first_id_char = alpha_char | '_' | '$'
 
 let  string_char = ['\000' - '\033'] | ['\035' - '\091'] | ['\093' - '\127']   
 
 let  line_comment = "//" not_cr_lf*
 
 let  blank = (' ' | '\009')+  
+
 let  ignored_helper = (blank | line_comment)+
 
 let  newline = ('\013' | '\010' | "\010\013")
 
+let  at_identifier =
+      '@' (simple_id_char | ':')*
+
 let identifier = 
-      first_id_char simple_id_char* ':'?
+      first_id_char simple_id_char*
 
 rule token = parse
   | newline { Lexing.new_line lexbuf; token lexbuf }
@@ -130,11 +132,11 @@ rule token = parse
   | "]" { R_BRACKET }
   | "(" { L_PAREN }
   | ")" { R_PAREN }
-  | ":" { COLON}
+  | ":" { Printf.printf "COLON %!"; COLON }
   | "." { DOT }
   | "'" { QUOTE }
   | ":=" { COLON_EQUALS }
-  | "=" { EQUALS }
+  | "=" { Printf.printf "EQUALS %!";EQUALS }
   | "&" { AND }
   | "|" { OR }
   | "||" { OROR }
@@ -143,18 +145,27 @@ rule token = parse
   | "-*" { WAND }
   | "=>" { IMP }
   | "<=>" { BIMP }  
-  | "?" { QUESTIONMARK }
+  | "?" { Printf.printf "QUESTIONMARK %!"; QUESTIONMARK }
   | "!" { BANG }
-  | "|-" { VDASH }
+  | "|-" { Printf.printf "VDASH %!";VDASH }
   | "-|" { DASHV }
-  | "~~>" {LEADSTO}
+  | "~~>" { LEADSTO }
+  | "/" { OP_DIV }
+  | "-" { OP_MINUS }
+  | "+" { OP_PLUS }
+  | "<=" { CMP_LE }
+  | "<" { CMP_LT }
+  | ">=" { CMP_GE }
+  | ">" { CMP_GT }
   | eof { EOF }
 
-  | identifier as s { kwd_or_else (IDENTIFIER s) s }
+  (* Both at_identifer and identifer should produce IDENTIFIER *)
+  | at_identifier as s { Printf.printf "at_ident %s %!" s; kwd_or_else (IDENTIFIER s) s }
+  | identifier as s { Printf.printf "ident %s %!" s;kwd_or_else (IDENTIFIER s) s }
 
   (* FIXME: What is the right lexing of string constants? *)
-  | '"' (string_char* as s) '"' { STRING_CONSTANT s }
-  | _ { failwith (error_message (Illegal_character ((Lexing.lexeme lexbuf).[0])) lexbuf)}
+  | '"' (string_char* as s) '"' { Printf.printf "STRING %s %!" s;STRING_CONSTANT s }
+  | _ { Printf.printf "here2 %!"; failwith (error_message (Illegal_character ((Lexing.lexeme lexbuf).[0])) lexbuf)}
 and comment = parse 
   | "/*"  { nest lexbuf; comment lexbuf }
   | "*/"  { if unnest lexbuf then comment lexbuf }
