@@ -92,7 +92,7 @@ clean:
 	$(MAKE) -f $(OCAMLMAKEFILE) $(MAINOPT) clean
 	$(MAKE) -f $(OCAMLMAKEFILE) $(TMAIN) clean
 	$(MAKE) -f $(OCAMLMAKEFILE) $(TMAINOPT) clean
-	rm -f *.annot doc/*.html doc/*.css doc/test.odoc logic_parser.output *~ *.dll *.exe *.cmi *.cmx *.o logic_parser.ml logic_lexer.ml logic_parser.mli logic_lexer.mli
+	rm -f *.annot doc/*.html doc/*.css doc/test.odoc *.cmi *.cmx *.o .depend
 
 prover.dll: $(CORESOURCE)
 	$(FSHARPCOMPILER) -a $(CORESOURCE) -o prover.dll

@@ -85,7 +85,7 @@ clean:
 	$(MAKE) -f $(OCAMLMAKEFILE) $(MAINOPT) clean
 	$(MAKE) -f $(OCAMLMAKEFILE) $(TMAIN) clean
 	$(MAKE) -f $(OCAMLMAKEFILE) $(TMAINOPT) clean
-	rm -f *.annot doc/*.html doc/*.css doc/test.odoc jparser.output  *.cmi *.cmx *.o jparser.ml jlexer.ml jparser.mli jlexer.mli .depend
+	rm -f *.annot doc/*.html doc/*.css doc/test.odoc *.cmi *.cmx *.o .depend
 
 .depend:
 	$(OCAMLDEP) $(INCLUDES) *.mli *.ml > .depend
