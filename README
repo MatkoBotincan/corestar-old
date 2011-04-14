@@ -47,7 +47,7 @@ To run the build process, call:
   make build
 
 To set the environment variables necessary for coreStar to run:
-  set_corestar_env.bat
+  setenv.bat
 
 After the build process has finished, you may have to add extension .exe to
 compiled binaries located in coreStar's bin subdirectory.

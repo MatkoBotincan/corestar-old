@@ -14,7 +14,7 @@ Immediate tasks:
 - Check whether precedence is needed in parser
 - Check translation of parser.equiv_rule
 
-To think about after refatoring:
+To think about after refactoring:
 - Exceptions handling
 - Sharing support syntax between smt, ai, ...
 - Support for quoting of external syntax
