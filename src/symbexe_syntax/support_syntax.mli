@@ -1,6 +1,6 @@
 (********************************************************
    This file is part of coreStar
-        src/parsing/support_syntax.mli
+        src/symbexe_syntax/support_syntax.mli
    Release
         $Release$
    Version
