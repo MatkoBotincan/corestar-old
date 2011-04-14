@@ -41,3 +41,5 @@ val spec2str : Format.formatter -> spec -> unit
 val pprinter_core_spec2str : spec -> string
 val name_ret_v1 : string
 val ret_v1 : Vars.var
+val parameter : int -> string
+val parameter_var : int -> Vars.var
