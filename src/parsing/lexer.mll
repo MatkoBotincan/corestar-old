@@ -56,7 +56,6 @@ let kwd_or_else =
     "equiv", EQUIV;
     "False", FALSE;
     "Frame", FRAME;
-    "Garbage", GARBAGE;
     "goto", GOTO;
     "if", IF;
     "Implication", IMPLICATION;

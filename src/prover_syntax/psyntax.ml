@@ -252,7 +252,6 @@ type pform_at =
   | P_Wand of pform * pform
   | P_Or of pform * pform
   | P_Septract of pform * pform
-  | P_Garbage
   | P_False
 and pform = pform_at list
 
@@ -279,17 +278,13 @@ let mkEQ(a1,a2) = [P_EQ(a1,a2)]
 let mkPPred(n,al) = [P_PPred(n,al)]
 let mkSPred(n,al) = [P_SPred(n,al)]
 
-let mkGarbage = [P_Garbage]
-
 let mkOr(f1,f2) = 
   if isFalse f1 then f2 
   else if isFalse f2 then f1 
   else [P_Or(f1,f2)]
 
 let mkWand(f1,f2) = 
-  if isFalse f1 then 
-    mkGarbage
-  else [P_Wand(f1,f2)]
+  [P_Wand(f1,f2)]
 
 let mkSeptract(f1,f2) = 
   if isFalse f1 then f1 
@@ -310,7 +305,6 @@ let rec subst_pform_at subs pa=
    | P_Or (f1,f2) -> mkOr(subst_pform subs f1,subst_pform subs f2)
    | P_Wand (f1,f2) -> mkWand(subst_pform subs f1,subst_pform subs f2)
    | P_Septract (f1,f2) -> mkSeptract(subst_pform subs f1,subst_pform subs f2)
-   | P_Garbage -> mkGarbage 
    | P_False -> mkFalse
 and subst_pform subs = 
     List.fold_left (fun pf pa -> (subst_pform_at subs pa) &&& pf) []
@@ -335,7 +329,6 @@ let rec string_form_at ppf pa =
   | P_Wand(f1,f2) -> Format.fprintf ppf "(%a)@ -* (%a)" string_form f1  string_form f2
   | P_Septract(f1,f2) -> Format.fprintf ppf "(%a)@ -o (%a)" string_form f1  string_form f2
   | P_False -> Format.fprintf ppf "False"
-  | P_Garbage -> Format.fprintf ppf "Garbage"
 and string_form ppf pf = 
   list_format "*" string_form_at ppf pf 
 
@@ -352,7 +345,6 @@ let rec fv_form_at pa set =
   | P_Wand(f1,f2) 
   | P_Septract(f1,f2) 
   | P_Or(f1,f2) -> fv_form f1 (fv_form f2 set)
-  | P_Garbage 
   | P_False -> set
 and fv_form pf set =
  List.fold_left (fun set pa -> fv_form_at pa set) set pf 
@@ -372,7 +364,6 @@ let rec ev_form_at pa set =
   | P_Wand(f1,f2) 
   | P_Septract(f1,f2) 
   | P_Or(f1,f2) -> ev_form f1 (ev_form f2 set)
-  | P_Garbage 
   | P_False -> set
 and ev_form pf set =
  List.fold_left (fun set pa -> ev_form_at pa set) set pf  

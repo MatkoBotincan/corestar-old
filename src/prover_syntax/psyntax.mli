@@ -114,12 +114,10 @@ type pform_at =
   | P_Wand of pform * pform
   | P_Or of pform * pform
   | P_Septract of pform * pform
-  | P_Garbage
   | P_False
 and pform = pform_at list
 val pconjunction : pform -> pform -> pform
 val ( &&& ) : pform -> pform -> pform
-val mkGarbage : pform_at list
 val subst_pform : varmap -> pform -> pform
 type psequent = pform * pform * pform * pform
 val purify : pform_at list -> pform_at list

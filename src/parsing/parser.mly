@@ -258,7 +258,6 @@ formula:
   | /*empty*/  { mkEmpty }
   | EMP  { mkEmpty }
   | FALSE { mkFalse}
-  | GARBAGE { mkGarbage}
   | BANG identifier L_PAREN term_list R_PAREN { mkPPred ($2, $4) } 
   | identifier L_PAREN term_list R_PAREN { mkSPred($1,$3) }
   | formula MULT formula { pconjunction $1 $3 }
@@ -273,7 +272,6 @@ formula_npv:
   | /*empty*/  { Printf.printf "mkEmpty/*empty*/ %!";mkEmpty }
   | EMP  { Printf.printf "mkEmpty %!";mkEmpty }
   | FALSE { Printf.printf "mkFalse %!";mkFalse}
-  | GARBAGE { Printf.printf "mkGarbage %!";mkGarbage}
   | BANG identifier L_PAREN term_npv_list R_PAREN {Printf.printf "mkPPred %!"; mkPPred ($2, $4) } 
   | identifier L_PAREN term_npv_list R_PAREN {Printf.printf "mkSpred %!"; mkSPred($1,$3) }
   | formula_npv MULT formula_npv { Printf.printf "pconjunction %!";pconjunction $1 $3 }

@@ -53,7 +53,6 @@ let rec form_at2str pa =
   | P_Wand(f1,f2) -> "[[("^(list_form2str f1)^" -* "^" [("^( list_form2str f2)^")]]"
   | P_Septract(f1,f2) ->  "[[("^(list_form2str f1)^" -o "^" [("^( list_form2str f2)^")]]"
   | P_False ->  "False"
-  | P_Garbage ->  "Garbage"
 and list_form2str  list = 
   match list with 
     [] ->  ""

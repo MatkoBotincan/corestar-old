@@ -337,7 +337,6 @@ let rec convert_to_inner (form : Psyntax.pform) : syntactic_form =
     | P_PPred (name, al) -> sspat, ((name, al)::splain),sdisj,seqs,sneqs
     | P_SPred (name, al) -> ((name,al)::sspat), splain,sdisj,seqs,sneqs
     | P_Wand _ | P_Septract _
-    | P_Garbage -> ("@Garbage",[])::sspat, splain,sdisj,seqs,sneqs
     | P_False -> sspat, (("@False", [])::splain),sdisj,seqs,sneqs
     | P_Or(f1,f2) ->
       let f1 = convert_to_inner f1 in
