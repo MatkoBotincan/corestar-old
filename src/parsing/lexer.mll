@@ -131,11 +131,11 @@ rule token = parse
   | "]" { R_BRACKET }
   | "(" { L_PAREN }
   | ")" { R_PAREN }
-  | ":" { Printf.printf "COLON %!"; COLON }
+  | ":" { COLON }
   | "." { DOT }
   | "'" { QUOTE }
   | ":=" { COLON_EQUALS }
-  | "=" { Printf.printf "EQUALS %!";EQUALS }
+  | "=" { EQUALS }
   | "&" { AND }
   | "|" { OR }
   | "||" { OROR }
@@ -144,9 +144,9 @@ rule token = parse
   | "-*" { WAND }
   | "=>" { IMP }
   | "<=>" { BIMP }  
-  | "?" { Printf.printf "QUESTIONMARK %!"; QUESTIONMARK }
+  | "?" { QUESTIONMARK }
   | "!" { BANG }
-  | "|-" { Printf.printf "VDASH %!";VDASH }
+  | "|-" { VDASH }
   | "-|" { DASHV }
   | "~~>" { LEADSTO }
   | "/" { OP_DIV }
@@ -159,11 +159,11 @@ rule token = parse
   | eof { EOF }
 
   (* Both at_identifer and identifer should produce IDENTIFIER *)
-  | at_identifier as s { Printf.printf "at_ident %s %!" s; kwd_or_else (IDENTIFIER s) s }
-  | identifier as s { Printf.printf "ident %s %!" s;kwd_or_else (IDENTIFIER s) s }
+  | at_identifier as s { kwd_or_else (IDENTIFIER s) s }
+  | identifier as s { kwd_or_else (IDENTIFIER s) s }
 
   (* FIXME: What is the right lexing of string constants? *)
-  | '"' (string_char* as s) '"' { Printf.printf "STRING %s %!" s;STRING_CONSTANT s }
+  | '"' (string_char* as s) '"' { STRING_CONSTANT s }
   | _ { Printf.printf "here2 %!"; failwith (error_message (Illegal_character ((Lexing.lexeme lexbuf).[0])) lexbuf)}
 and comment = parse 
   | "/*"  { nest lexbuf; comment lexbuf }
