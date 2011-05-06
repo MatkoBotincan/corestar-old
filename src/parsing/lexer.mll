@@ -24,22 +24,25 @@ exception Error of error * Lexing.lexbuf
 
 let nest_depth = ref 0
 let nest_start_pos = ref dummy_pos
-let nest x =
-  nest_depth := !nest_depth + 1; nest_start_pos := (x.lex_curr_p)
-let unnest x = 
-  nest_depth := !nest_depth - 1; (!nest_depth)!=0 
+let nest x = incr nest_depth; nest_start_pos := x.lex_curr_p
+let unnest x = decr nest_depth; !nest_depth <> 0 
+
+let string_of_position p =
+  let r = Buffer.create 10 in
+  if p.pos_fname <> "" then begin
+    Buffer.add_string r p.pos_fname; Buffer.add_char r ':'
+  end;
+  Printf.bprintf r "%d:%d" p.pos_lnum (p.pos_cnum - p.pos_bol);
+  Buffer.contents r
 
 let error_message e lb = 
   match e with 
-    Illegal_character c -> 
-      Printf.sprintf "Illegal character %c found at line %d character %d.\n" 
-	c 
-	lb.lex_curr_p.pos_lnum 
-	(lb.lex_curr_p.pos_cnum - lb.lex_curr_p.pos_bol)
-  | Unterminated_comment -> Printf.sprintf "Unterminated comment started at line %d character %d in %s.\n"
-	!nest_start_pos.pos_lnum 
-	(!nest_start_pos.pos_cnum  - !nest_start_pos.pos_bol)
-	lb.lex_curr_p.pos_fname
+    Illegal_character c ->
+      Printf.sprintf "%s: illegal character: %s\n" 
+        (string_of_position lb.lex_curr_p) (Char.escaped c)
+  | Unterminated_comment ->
+      Printf.sprintf "%s: unterminated comment\n"
+        (string_of_position !nest_start_pos)
   
 (* [kwd_or_else d s] is the token corresponding to [s] if there is one,
   or the default [d] otherwise. *)
@@ -78,15 +81,6 @@ let kwd_or_else =
   ];
   fun d s ->
   try Hashtbl.find keyword_table s with Not_found -> d
-
-(* error reporting *)
-open Format
-
-let report_error = function
-  | Illegal_character c ->
-      Format.printf  "Illegal character (%s)@\n" (Char.escaped c)
-  | Unterminated_comment ->
-      Format.printf "Comment not terminated@\n"
 
 }
 

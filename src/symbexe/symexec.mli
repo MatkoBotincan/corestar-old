@@ -74,6 +74,8 @@ val verify_ensures :
   Psyntax.pform ->
   (Psyntax.pform -> Psyntax.form) ->
   Sepprover.inner_form list list -> Psyntax.logic -> Psyntax.logic -> unit
+
+(* TODO: This is only used by translatejimple in jstar, so perhaps it should not be here. *)
 val get_frame :
   Cfg_core.cfg_node list ->
   Psyntax.pform ->

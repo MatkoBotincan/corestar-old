@@ -11,6 +11,7 @@
       LICENSE.txt
  ********************************************************)
 
+(* I'm the main interface for src/prover. Read me. *)
 
 open Psyntax
 

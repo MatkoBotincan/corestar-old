@@ -12,9 +12,7 @@
  ********************************************************)
 
 
-open Congruence
 open Format
-open Psyntax
 
 type term_structure
 
@@ -48,9 +46,9 @@ val determined_exists : term_structure -> (term_handle list) -> term_handle -> t
    Add Psyntax to the term_structure, and return a term_handle and updated term structure
 *)
 
-val ground_pattern_tuple : args list -> term_structure -> (term_handle * term_structure)
+val ground_pattern_tuple : Psyntax.args list -> term_structure -> (term_handle * term_structure)
 
-val ground_pattern : args -> term_structure -> (term_handle * term_structure)
+val ground_pattern : Psyntax.args -> term_structure -> (term_handle * term_structure)
         
 val add_term : bool -> Psyntax.args -> term_structure -> (term_handle * term_structure)
 
@@ -113,7 +111,7 @@ val get_term : term_structure -> term_handle-> Psyntax.args
 val kill_var : term_structure -> Vars.var -> term_structure 
 val update_var_to : term_structure -> Vars.var -> Psyntax.args -> term_structure
 
-val rewrite : term_structure -> rewrite_rule list -> (term_structure * rewrite_guard -> bool) -> term_structure
+val rewrite : term_structure -> Psyntax.rewrite_rule list -> (term_structure * Psyntax.rewrite_guard -> bool) -> term_structure
 
 val ts_eq : term_structure -> term_structure -> bool
 

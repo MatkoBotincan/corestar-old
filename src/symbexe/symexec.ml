@@ -440,16 +440,15 @@ and execute_core_stmt
     (sheap : formset_entry) 
     : formset_entry list =
   let sheap_noid = fst sheap in
-  let stm = n in
   if Config.symb_debug() then
-    (Format.printf "@\nExecuting statement:@ %a%!" Pprinter_core.pp_stmt_core stm.skind;
+    (Format.printf "@\nExecuting statement:@ %a%!" Pprinter_core.pp_stmt_core n.skind;
     Format.printf "@\nwith heap :@\n    %a@\n@\n@.%!" heap_pprinter sheap_noid;);
   (
     if Config.symb_debug() then
       (Format.printf "\nStarting execution of node %i \n%!" (n.sid);
-      Format.printf "@\nExecuting statement:@ %a%!" Pprinter_core.pp_stmt_core stm.skind; 
+      Format.printf "@\nExecuting statement:@ %a%!" Pprinter_core.pp_stmt_core n.skind; 
       Format.printf "@\nwith heap :@\n    %a@\n@\n@.%!" heap_pprinter sheap_noid;);
-    (match stm.skind with 
+    (match n.skind with 
     | Label_stmt_core l -> 
       (* Update the labels formset, if sheap already implied then fine, otherwise or it in. *)
       (let id = n.sid in 
@@ -481,7 +480,7 @@ and execute_core_stmt
         List.iter 
           (fun sheap2 ->  
             ignore (add_edge_with_proof (snd sheap) (snd sheap2) AbsE
-              ("Abstract@"^(Debug.toString Pprinter_core.pp_stmt_core stm.skind))))
+              ("Abstract@"^(Debug.toString Pprinter_core.pp_stmt_core n.skind))))
           sheaps_abs;
         
         if Config.symb_debug() then
@@ -510,7 +509,7 @@ and execute_core_stmt
                     (frame_inner !curr_logic sheap2_af sheap1_af <> None))
                   then
                     (ignore (add_edge_with_proof id2 id1 ContE
-                      ("Contains@"^(Debug.toString Pprinter_core.pp_stmt_core stm.skind))); false)
+                      ("Contains@"^(Debug.toString Pprinter_core.pp_stmt_core n.skind))); false)
                   else (s := ("\n---------------------------------------------------------\n" ^
                     (string_of_proof ())) :: !s; true))
                 formset)
@@ -713,7 +712,6 @@ let get_frame
         in 
         let id_exit = add_good_node ("Exit") in 
         check_and_get_frame (pre,id_exit) post
-
 
 let verify_inner
     (mname : string)
