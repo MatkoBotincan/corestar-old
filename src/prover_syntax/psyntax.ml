@@ -452,12 +452,13 @@ let string_where ppf where =
       Format.fprintf ppf "%a pureguard"
       string_form f
         
-
-
+type sequent_rule_premises =
+	| Rule_Premises of psequent list list
+	| Error_Premise of string
 
 type sequent_rule = 
    psequent * 
-   (psequent list list) * 
+   sequent_rule_premises * 
    string * 
    ((* without *) pform * pform) * 
    (where list)
@@ -473,10 +474,13 @@ let pp_sequent_rule f ((c, hss, n, w, ss) : sequent_rule) =
   fprintf f "@\n@[<2>rule %s:" n;
   p "" pp_psequent c;
   (match hss with
-    | [] -> ()
-    | x::xs ->
-        let ps = list_format ";" pp_psequent in
-        p "if " ps x; List.iter (p "or" ps) xs);
+	| Error_Premise error -> fprintf f "@\n@[<4>%s@]" error
+	| Rule_Premises premises -> 
+	  (match premises with
+	    | [] -> ()
+		| x::xs ->
+		  let ps = list_format ";" pp_psequent in
+		  p "if " ps x; List.iter (p "or" ps) xs));
   p "without " pp_entailment w;
   if ss <> [] then
     p "where " (list_format ";" string_where) ss;
@@ -533,12 +537,12 @@ let expand_equiv_rules rules =
   let equiv_rule_to_seq_rule x list : rules list= 
     match x with 
       EquivRule(name, guard, leftform, rightform, without) -> 
-	(SeqRule((guard, leftform, [],mkEmpty), [[([],rightform,[],mkEmpty)]],name ^ "_left", (without,mkEmpty) , []))
+	(SeqRule((guard, leftform, [],mkEmpty), Rule_Premises([[([],rightform,[],mkEmpty)]]),name ^ "_left", (without,mkEmpty) , []))
 	:: 
-	  (SeqRule(([],[],guard&&&leftform,mkEmpty), [[([],[],guard&&&rightform,mkEmpty)]], name ^"_right", (mkEmpty, without), []))
+	  (SeqRule(([],[],guard&&&leftform,mkEmpty), Rule_Premises([[([],[],guard&&&rightform,mkEmpty)]]), name ^"_right", (mkEmpty, without), []))
 	::
 	  if(guard <> []) then 
-	    (SeqRule((guard, [], leftform, mkEmpty), [[([],[],rightform,mkEmpty)]], name ^ "_split", (mkEmpty, without), []))
+	    (SeqRule((guard, [], leftform, mkEmpty), Rule_Premises([[([],[],rightform,mkEmpty)]]), name ^ "_split", (mkEmpty, without), []))
 	    ::
 	      list
 	  else
@@ -698,3 +702,16 @@ let empty_logic : logic = {
   consdecl = [];
   dummy = ();
 }
+
+type tactic = 
+	| Tactical_Sequence of tactic * tactic
+	| Tactical_Branching of tactic * tactic
+	| Tactical_Repeat of tactic
+	| Tactical_Try of tactic
+	| Tactical_Rule of sequent_rule
+	| Tactical_Call of string
+	| Tactical_Without of (pform * pform) * tactic
+	| Tactical_Where of (where list) * tactic
+	| Tactical_Id of string
+	| Tactical_Fail of string
+

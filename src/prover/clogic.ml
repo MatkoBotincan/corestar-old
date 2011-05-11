@@ -602,7 +602,7 @@ let abductive_sequent (seq : sequent) : bool =
   (seq.obligation = empty)
 
 (* Stolen from Prover just for refactor *)
-type sequent_rule = psequent * (psequent list list) * string * ((* without *) pform * pform) * (where list)
+type sequent_rule = psequent * sequent_rule_premises * string * ((* without *) pform * pform) * (where list)
 
 
 type pat_sequent =
@@ -640,14 +640,18 @@ type inner_sequent_rule =
 let convert_rule (sr : sequent_rule) : inner_sequent_rule =
   match sr with
     conc,prems,name,(withoutl,withoutr),where ->
+	  let rule_premises = match prems with
+	    | Rule_Premises rp -> List.map (List.map convert_sequent) rp
+	    | Error_Premise error -> assert false (* TODO handle error*)
+	  in
       {
-       conclusion = convert_sequent conc;
-       premises = List.map (List.map convert_sequent) prems;
-       name = name;
-       without_left = convert_to_inner withoutl;
-       without_right = convert_to_inner withoutr;
-       where = where;
-     }
+        conclusion = convert_sequent conc;
+        premises = rule_premises;
+        name = name;
+        without_left = convert_to_inner withoutl;
+        without_right = convert_to_inner withoutr;
+        where = where;
+      }
 
 
 (* Match in syntactic ones too *)

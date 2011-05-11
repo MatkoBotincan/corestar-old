@@ -61,6 +61,7 @@ let parse_warning s =
 %token AXIOMS
 %token BANG
 %token BIMP
+%token CALL
 %token CMP_LE
 %token CMP_LT
 %token CMP_GE
@@ -76,11 +77,14 @@ let parse_warning s =
 %token EOF
 %token EQUALS 
 %token EQUIV
+%token ERROR
+%token FAIL
 %token FALSE
 %token FRAME
 %token GARBAGE
 %token GOTO 
 %token <string> IDENTIFIER 
+%token IDTAC
 %token IF
 %token IMP
 %token IMPLICATION
@@ -105,6 +109,7 @@ let parse_warning s =
 %token ORTEXT
 %token QUESTIONMARK 
 %token QUOTE
+%token REPEAT
 %token R_BRACE 
 %token R_BRACKET 
 %token R_PAREN 
@@ -115,6 +120,7 @@ let parse_warning s =
 %token SPECTEST
 %token <string> STRING_CONSTANT 
 %token TRUE
+%token TRY
 %token VDASH
 %token WAND
 %token WHERE
@@ -315,6 +321,10 @@ sequent_list_or_list:
 without:
   | WITHOUT formula { ($2, mkEmpty) }
   | WITHOUT formula VDASH formula { ($2,$4) }
+;
+
+without_op:
+  | without { $1 }
   | /* empty */ { (mkEmpty,mkEmpty) }
 ;
 
@@ -358,7 +368,7 @@ equiv_rule:
 rule:
   | CONSTRUCTOR identifier  { NormalEntry( ConsDecl($2) ) }
   | IMPORT STRING_CONSTANT SEMICOLON  { ImportEntry($2) }
-  | RULE identifier_op COLON sequent without where IF sequent_list_or_list { NormalEntry(SeqRule($4,$8,$2,$5,$6)) }
+  | RULE identifier_op COLON sequent without_op where IF sequent_list_or_list { NormalEntry(SeqRule($4,Rule_Premises($8),$2,$5,$6)) }
   | REWRITERULE identifier_op COLON identifier L_PAREN term_list R_PAREN EQUALS term ifclause without_simp where 
     { NormalEntry(RewriteRule({function_name=$4;
         arguments=$6;
@@ -377,7 +387,7 @@ rule:
       let wo=(mkEmpty,mkEmpty) in 
       let seq2=(mkEmpty,$6,mkEmpty,mkEmpty) in
       let seq_list=[[seq2]] in
-      NormalEntry(SeqRule(seq,seq_list,$2,wo,$7)) }
+      NormalEntry(SeqRule(seq,Rule_Premises(seq_list),$2,wo,$7)) }
   | equiv_rule { NormalEntry($1) }
 ;
 
@@ -465,6 +475,27 @@ symb_question_file:
 symb_test_file: 
   | EOF  { [] }
   | symb_test symb_test_file  {$1 :: $2}
+;
+
+tactical_rule:
+  | RULE identifier_op COLON sequent IF sequent_list_or_error { ($4,$6,$2,([],[]),[]) }
+;
+
+tactic: 
+  | tactic SEMICOLON tactic { Tactical_Sequence($1,$3) }
+  | tactic OROR tactic { Tactical_Branching($1,$3) }
+  | REPEAT L_BRACE tactic R_BRACE { Tactical_Repeat($3) }
+  | TRY L_BRACE tactic R_BRACE { Tactical_Try($3) }
+  | tactical_rule { Tactical_Rule($1) }
+  | CALL identifier { Tactical_Call($2) }
+  | without L_BRACE tactic R_BRACE { Tactical_Without($1,$3) }
+  | WHERE clause_list L_BRACE tactic R_BRACE { Tactical_Where($2,$4) } 
+  | IDTAC STRING_CONSTANT { Tactical_Id($2) }   
+  | FAIL STRING_CONSTANT { Tactical_Fail($2) }
+
+sequent_list_or_error:
+  | sequent_list { Rule_Premises([$1]) }
+  | ERROR STRING_CONSTANT { Error_Premise($2) }
 ;
 
 %% (* trailer *)

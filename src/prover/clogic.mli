@@ -123,7 +123,7 @@ val true_sequent : sequent -> bool
 val frame_sequent : sequent -> bool
 val abductive_sequent : sequent -> bool 
 type sequent_rule =
-    Psyntax.psequent * Psyntax.psequent list list * string *
+    Psyntax.psequent * Psyntax.sequent_rule_premises * string *
     (Psyntax.pform * Psyntax.pform) * Psyntax.where list
 type pat_sequent = {
   assumption_same : syntactic_form;

@@ -128,8 +128,11 @@ type where =
   | NotInContext of varterm 
   | NotInTerm of varterm * args
   | PureGuard of pform 
+type sequent_rule_premises =
+	| Rule_Premises of psequent list list
+	| Error_Premise of string
 type sequent_rule =
-    psequent * psequent list list * string * (pform * pform) * where list
+    psequent * sequent_rule_premises * string * (pform * pform) * where list
 val pp_sequent_rule : Format.formatter -> sequent_rule -> unit
 type rewrite_guard = {
   without_form : pform;
@@ -191,7 +194,7 @@ val add_subst : var -> term -> variable_subst -> variable_subst
 val subst_kill_vars_to_fresh_prog : varset -> variable_subst
 val subst_kill_vars_to_fresh_exist : varset -> variable_subst
 val subst_form : variable_subst -> form -> form
-val mk_seq_rule : psequent * psequent list list * string -> sequent_rule
+val mk_seq_rule : psequent * sequent_rule_premises * string -> sequent_rule
 type logic = {
   seq_rules : sequent_rule list;
   rw_rules : rewrite_rule list;
@@ -199,3 +202,14 @@ type logic = {
   dummy : unit;
 }
 val empty_logic : logic
+type tactic = 
+	| Tactical_Sequence of tactic * tactic
+	| Tactical_Branching of tactic * tactic
+	| Tactical_Repeat of tactic
+	| Tactical_Try of tactic
+	| Tactical_Rule of sequent_rule
+	| Tactical_Call of string
+	| Tactical_Without of (pform * pform) * tactic
+	| Tactical_Where of (where list) * tactic
+	| Tactical_Id of string
+	| Tactical_Fail of string
