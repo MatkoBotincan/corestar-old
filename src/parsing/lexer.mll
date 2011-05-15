@@ -76,6 +76,7 @@ let kwd_or_else =
     "rule", RULE;
     "Specification", SPECIFICATION;
     "SpecTest", SPECTEST; 
+	"tactic", TACTIC;
     "True", TRUE;
 	"try", TRY;
     "where", WHERE;

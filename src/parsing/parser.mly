@@ -119,6 +119,7 @@ let parse_warning s =
 %token SPECIFICATION
 %token SPECTEST
 %token <string> STRING_CONSTANT 
+%token TACTIC
 %token TRUE
 %token TRY
 %token VDASH
@@ -138,6 +139,9 @@ let parse_warning s =
 /* entry points */
 %start rule_file
 %type <Psyntax.rules Load.importoption list> rule_file
+
+%start tactic_file
+%type <Psyntax.tactic list> tactic_file
 
 %start question_file
 %type <Psyntax.question list> question_file
@@ -395,6 +399,11 @@ rule_file:
   | EOF  { [] }
   | rule rule_file  { $1 :: $2 }
 ;
+
+tactic_file:
+  | EOF  { [] }
+  | tactic tactic_file  { $1 :: $2 }
+;
  
    
 /* Specifications */
@@ -481,21 +490,24 @@ tactical_rule:
   | RULE identifier_op COLON sequent IF sequent_list_or_error { ($4,$6,$2,([],[]),[]) }
 ;
 
-tactic: 
-  | tactic SEMICOLON tactic { Tactical_Sequence($1,$3) }
-  | tactic OROR tactic { Tactical_Branching($1,$3) }
-  | REPEAT L_BRACE tactic R_BRACE { Tactical_Repeat($3) }
-  | TRY L_BRACE tactic R_BRACE { Tactical_Try($3) }
-  | tactical_rule { Tactical_Rule($1) }
-  | CALL identifier { Tactical_Call($2) }
-  | without L_BRACE tactic R_BRACE { Tactical_Without($1,$3) }
-  | WHERE clause_list L_BRACE tactic R_BRACE { Tactical_Where($2,$4) } 
-  | IDTAC STRING_CONSTANT { Tactical_Id($2) }   
-  | FAIL STRING_CONSTANT { Tactical_Fail($2) }
-
 sequent_list_or_error:
   | sequent_list { Rule_Premises([$1]) }
-  | ERROR STRING_CONSTANT { Error_Premise($2) }
+  | ERROR STRING_CONSTANT WITH STRING_CONSTANT { Error_Premise {tactical_error=$2; tactic_to_prove=$4;} }
 ;
+
+tactical: 
+  | tactical SEMICOLON tactical { Tactical_Sequence($1,$3) }
+  | tactical OROR tactical { Tactical_Branching($1,$3) }
+  | REPEAT L_BRACE tactical R_BRACE { Tactical_Repeat($3) }
+  | TRY L_BRACE tactical R_BRACE { Tactical_Try($3) }
+  | tactical_rule { Tactical_Rule($1) }
+  | CALL identifier { Tactical_Call($2) }
+  | without L_BRACE tactical R_BRACE { Tactical_Without($1,$3) }
+  | WHERE clause_list L_BRACE tactical R_BRACE { Tactical_Where($2,$4) } 
+  | IDTAC STRING_CONSTANT { Tactical_Id($2) }   
+  | FAIL STRING_CONSTANT { Tactical_Fail($2) }
+;
+
+tactic: TACTIC identifier tactical { ($3,$2) };
 
 %% (* trailer *)

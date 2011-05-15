@@ -160,3 +160,10 @@ val make_implies_inner : F.ts_formula -> F.ts_formula -> sequent
 val ts_form_to_pform : F.ts_formula -> Psyntax.pform
 val ts_form_to_pform_no_ts : F.ts_formula -> Psyntax.pform
 val pform_to_ts_form : Psyntax.pform -> F.ts_formula
+type tactic_fail = string
+type tactic_error = string
+type tactic_result = {
+  goals : sequent list;
+  fails : tactic_fail list;
+  errors : tactic_error list;
+}

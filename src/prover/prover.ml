@@ -517,3 +517,103 @@ let check_implies_list fl1 pf =
     (fun f1 -> 
       check_implication_pform empty_logic f1 pf
     ) fl1 
+	
+(* Tactics *)
+
+let find_tactic_by_id id =
+  None (*TODO: Implement*)
+
+let rec apply_tactic 
+  (wi : (syntactic_form * syntactic_form) list) 
+  (wh : where list) 
+  (goal : sequent) 
+  (tacexpr : tactical)
+  : tactic_result =
+    let join tr1 tr2 = 
+      { goals = tr1.goals @ tr2.goals; 
+        fails = tr1.fails @ tr2.fails;
+        errors = tr1.errors @ tr2.errors;
+    } in
+	match tacexpr with 
+      | Tactical_Sequence (tacexpr1, tacexpr2) -> 
+        let r1 = apply_tactic wi wh goal tacexpr1 in
+        if (r1.fails = [] && r1.errors = []) then
+          List.fold_left (fun tr goal -> join tr (apply_tactic wi wh goal tacexpr2)) 
+                         {goals = []; fails = []; errors = [];} r1.goals 
+        else { 
+          goals = []; 
+          fails = r1.fails;
+          errors = r1.errors; 
+        }
+      | Tactical_Branching (tacexpr1, tacexpr2) -> 
+        let r1 = apply_tactic wi wh goal tacexpr1 in
+        if (r1.fails = [] && r1.errors = []) then r1
+        else let r2 = apply_tactic wi wh goal tacexpr2 in
+          { goals = r2.goals;
+            fails = r2.fails;
+            errors = r1.errors @ r2.errors;  
+          }
+      | Tactical_Repeat tacexpr -> 
+        let r1 = apply_tactic wi wh goal tacexpr in
+        if (r1.fails = [] && r1.errors = []) then
+		  List.fold_left (fun tr goal -> join tr (apply_tactic wi wh goal (Tactical_Repeat tacexpr))) 
+                         {goals = []; fails = []; errors = [];} r1.goals 
+        else { 
+          goals = [goal]; 
+          fails = [];
+          errors = r1.errors;
+        }
+      | Tactical_Try tacexpr -> 
+        let r1 = apply_tactic wi wh goal tacexpr in
+        if (r1.fails = [] && r1.errors = []) then r1
+        else {
+          goals = [goal];
+          fails = [];
+          errors = r1.errors;
+        }  
+      | Tactical_Rule seq_rule -> 
+        let (_,por,_,_,_) = seq_rule in
+        (match por with
+          | Rule_Premises premises -> assert false           
+          | Error_Premise error -> 
+              let (false_ob, _) = convert_sf false goal.ts false_sform in
+              let new_goal = {
+                matched = goal.matched;
+                ts = goal.ts;
+                assumption = goal.assumption;
+                obligation = false_ob;
+                antiframe = goal.antiframe; 
+              } in
+              let r1 = apply_tactic wi wh new_goal (Tactical_Call error.tactic_to_prove) in
+              if (r1.goals = [] && r1.fails = [] && r1.errors = []) then 
+              { goals = [];
+                fails = [];
+                errors = [];
+              }
+              else {
+                goals = [];
+                fails = [];
+                errors = r1.errors @ [error.tactical_error]  
+              }
+            )  
+      | Tactical_Call id -> 
+        let tac_by_id = find_tactic_by_id(id) in
+        (match tac_by_id with
+          | None -> {goals = []; fails = [sprintf "Failed to find rule %s." id]; errors = [];}
+          | Some tac -> apply_tactic wi wh goal tac)
+      | Tactical_Without ((wi_left, wi_right), tacexpr) -> 
+        apply_tactic (wi @ [(convert_to_inner wi_left, convert_to_inner wi_right)]) wh goal tacexpr
+      | Tactical_Where (whs, tacexpr) -> apply_tactic wi (wh @ whs) goal tacexpr
+      | Tactical_Id msg -> 
+        { goals = [goal];
+          fails = [];
+          errors = [];
+        }
+      | Tactical_Fail msg -> 
+        { goals = [];
+          fails = [msg];
+          errors = [];
+        }  
+						
+			
+	

@@ -806,3 +806,14 @@ let ts_form_to_pform_no_ts ts_form =
 
 let pform_to_ts_form pform =
   convert_with_eqs false pform
+
+type tactic_fail = string
+
+type tactic_error = string
+
+type tactic_result =
+    {
+      goals : sequent list;
+      fails : tactic_fail list;
+      errors : tactic_error list;
+   }
