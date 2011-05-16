@@ -181,7 +181,7 @@ cmpop:
 
 lvariable:
   | identifier { newVar($1) }
-  | QUESTIONMARK identifier { Printf.printf "?newAnyVar %!"; newAnyVar($2) }
+  | QUESTIONMARK identifier { newAnyVar($2) }
 ;
 lvariable_list_ne:
   |  lvariable    { [$1] }
@@ -224,10 +224,10 @@ term_npv_list:
 
 /* With pattern vars*/
 term: 
-  | lvariable {Printf.printf "lvariable %!"; Arg_var ($1)}
-  | identifier L_PAREN term_list R_PAREN {Printf.printf "term() %s %!" $1; Arg_op($1, $3) }
+  | lvariable { Arg_var ($1) }
+  | identifier L_PAREN term_list R_PAREN { Arg_op($1, $3) }
   | L_PAREN term binop term R_PAREN { Arg_op($3, [$2;$4]) }
-  | L_BRACE fldlist R_BRACE {mkArgRecord $2}
+  | L_BRACE fldlist R_BRACE { mkArgRecord $2 }
   | STRING_CONSTANT { Arg_string($1) }
 ;
 term_list_ne:
@@ -269,17 +269,17 @@ formula:
 ;
 
 formula_npv: 
-  | /*empty*/  { Printf.printf "mkEmpty/*empty*/ %!";mkEmpty }
-  | EMP  { Printf.printf "mkEmpty %!";mkEmpty }
-  | FALSE { Printf.printf "mkFalse %!";mkFalse}
-  | BANG identifier L_PAREN term_npv_list R_PAREN {Printf.printf "mkPPred %!"; mkPPred ($2, $4) } 
-  | identifier L_PAREN term_npv_list R_PAREN {Printf.printf "mkSpred %!"; mkSPred($1,$3) }
-  | formula_npv MULT formula_npv { Printf.printf "pconjunction %!";pconjunction $1 $3 }
-  | formula_npv OROR formula_npv { Printf.printf "mkOr %!";mkOr ($1,$3) }
-  | term_npv NOT_EQUALS term_npv { Printf.printf "mkNEq %!";mkNEQ ($1,$3) }
-  | term_npv EQUALS term_npv { Printf.printf "mkEq %!";mkEQ ($1,$3) }
+  | /*empty*/  { mkEmpty }
+  | EMP  { mkEmpty }
+  | FALSE { mkFalse}
+  | BANG identifier L_PAREN term_npv_list R_PAREN { mkPPred ($2, $4) }
+  | identifier L_PAREN term_npv_list R_PAREN { mkSPred($1,$3) }
+  | formula_npv MULT formula_npv { pconjunction $1 $3 }
+  | formula_npv OROR formula_npv { mkOr ($1,$3) }
+  | term_npv NOT_EQUALS term_npv { mkNEQ ($1,$3) }
+  | term_npv EQUALS term_npv { mkEQ ($1,$3) }
   | term_npv cmpop term_npv { mkPPred ($2, [$1;$3]) }
-  | L_PAREN formula_npv R_PAREN {Printf.printf "mk() %!"; $2 }
+  | L_PAREN formula_npv R_PAREN { $2 }
 ;   
    
 spatial_at: 
@@ -290,8 +290,8 @@ spatial_list_ne:
   | spatial_at    { $1 }
 ;
 spatial_list: 
-  | spatial_list_ne { Printf.printf "spatial_list_ne %!"; $1 }
-  | /*empty*/  { Printf.printf "spatial list empty %!";mkEmpty }
+  | spatial_list_ne { $1 }
+  | /*empty*/  { mkEmpty }
 ;
 
    
@@ -383,14 +383,14 @@ rule:
 
 rule_file:
   | EOF  { [] }
-  | rule rule_file  {Printf.printf "rulerule_file %!"; $1 :: $2}
+  | rule rule_file  { $1 :: $2 }
 ;
  
    
 /* Specifications */
 
 spec:
-  | L_BRACE formula R_BRACE L_BRACE formula R_BRACE exp_posts  { Printf.printf "spec %!"; {pre=$2;post=$5;excep=$7} }
+  | L_BRACE formula R_BRACE L_BRACE formula R_BRACE exp_posts  { {pre=$2;post=$5;excep=$7} }
 ;
 
 exp_posts:
@@ -434,10 +434,9 @@ question:
 ;
 
 test:
-  | IMPLICATION COLON formula_npv VDASH formula_npv QUESTIONMARK boolean {  
-  Printf.printf "IMPLICATION %!"; TImplication($3,$5,$7) }
-  | INCONSISTENCY COLON formula_npv QUESTIONMARK boolean {TInconsistency($3,$5)}
-  | FRAME COLON formula_npv VDASH formula_npv QUESTIONMARK formula_npv {TFrame($3,$5,$7)}
+  | IMPLICATION COLON formula_npv VDASH formula_npv QUESTIONMARK boolean { TImplication($3,$5,$7) }
+  | INCONSISTENCY COLON formula_npv QUESTIONMARK boolean { TInconsistency($3,$5) }
+  | FRAME COLON formula_npv VDASH formula_npv QUESTIONMARK formula_npv { TFrame($3,$5,$7) }
 ;
 
 question_file: 
@@ -446,8 +445,8 @@ question_file:
 ;
 
 test_file: 
-  | EOF  { Printf.printf "EMPTY %!"; [] }
-  | test test_file  {Printf.printf "SOME %!"; $1 :: $2}
+  | EOF  { [] }
+  | test test_file  { $1 :: $2 }
 ;
 
 symb_question: 
