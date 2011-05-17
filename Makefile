@@ -5,18 +5,18 @@ ifndef CORESTAR_HOME
 endif
 export CORESTAR_HOME
 
-SRC_DIRS=abs_int parsing plugin_interface prover prover_syntax proverfront \
-				 symbexe symbexe_syntax symbfront utils
+SRC_DIRS=src
 MAINS=symbfront test_symb test_logic
 LIBS=dynlink str unix
 
 # section that shouldn't change often
 
-OCAMLBUILD=ocamlbuild $(addprefix -I src/,$(SRC_DIRS)) $(addprefix -lib ,$(LIBS))
+SRC_SUBDIRS=$(addsuffix .subdirs,$(SRC_DIRS))
+OCAMLBUILD=ocamlbuild `cat $(SRC_SUBDIRS)` $(addprefix -lib ,$(LIBS))
 
 build: native
 
-native byte:
+native byte: $(SRC_SUBDIRS)
 	$(OCAMLBUILD) $(addsuffix .$@,$(MAINS))
 	for f in $(MAINS); do ln -sf ../`readlink $$f.$@` bin/$$f; rm $$f.$@; done
 
@@ -35,10 +35,13 @@ all: build test
 
 clean:
 	ocamlbuild -clean
-	rm -f lib/*.a lib/*.cmxa lib/*.cmxs bin/*
+	rm -f lib/*.a lib/* bin/* *.subdirs
 	$(MAKE) -C unit_tests clean
 	$(MAKE) -C scripts clean
 	$(MAKE) -C doc/tutorial clean
+
+%.subdirs: %
+	ls -F $*/ | grep / | sed "s./.." | sed "s.^.-I $*/." > $*.subdirs
 
 .PHONY: all build byte clean doc native scripts test
 
