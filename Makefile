@@ -1,10 +1,24 @@
+# section that changes often
+
 ifndef CORESTAR_HOME
 	CORESTAR_HOME=$(CURDIR)
 endif
 export CORESTAR_HOME
 
-build:
-	$(MAKE) -C src
+SRC_DIRS=abs_int parsing plugin_interface prover prover_syntax proverfront \
+				 symbexe symbexe_syntax symbfront utils
+MAINS=symbfront
+LIBS=dynlink str unix
+
+
+# section that shouldn't change often
+
+OCAMLBUILD=ocamlbuild $(addprefix -I src/,$(SRC_DIRS)) $(addprefix -lib ,$(LIBS))
+
+build: native
+
+native byte:
+	$(OCAMLBUILD) $(addsuffix .$@,$(MAINS))
 
 test: build
 	$(MAKE) -s -C unit_tests
@@ -18,13 +32,13 @@ scripts:
 all: build test
 
 clean:
+	ocamlbuild -clean
 	rm -f lib/*.a lib/*.cmxa lib/*.cmxs bin/*.cmxs
-	$(MAKE) -C src clean
 	$(MAKE) -C unit_tests clean
 	$(MAKE) -C scripts clean
 	$(MAKE) -C doc/tutorial clean
 
-.PHONY: build test test clean
+.PHONY: all build byte clean doc native scripts test
 
 -include .install.mk
 
