@@ -10,7 +10,6 @@ SRC_DIRS=abs_int parsing plugin_interface prover prover_syntax proverfront \
 MAINS=symbfront test_symb test_logic
 LIBS=dynlink str unix
 
-
 # section that shouldn't change often
 
 OCAMLBUILD=ocamlbuild $(addprefix -I src/,$(SRC_DIRS)) $(addprefix -lib ,$(LIBS))
@@ -21,7 +20,9 @@ native byte:
 	$(OCAMLBUILD) $(addsuffix .$@,$(MAINS))
 	for f in $(MAINS); do ln -sf ../`readlink $$f.$@` bin/$$f; rm $$f.$@; done
 
-test: build
+test: test-native
+
+test-native test-byte: test-%: %
 	$(MAKE) -s -C unit_tests
 
 doc:
