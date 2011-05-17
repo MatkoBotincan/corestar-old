@@ -7,7 +7,7 @@ export CORESTAR_HOME
 
 SRC_DIRS=abs_int parsing plugin_interface prover prover_syntax proverfront \
 				 symbexe symbexe_syntax symbfront utils
-MAINS=symbfront
+MAINS=symbfront test_symb test_logic
 LIBS=dynlink str unix
 
 
@@ -19,6 +19,7 @@ build: native
 
 native byte:
 	$(OCAMLBUILD) $(addsuffix .$@,$(MAINS))
+	for f in $(MAINS); do ln -sf ../`readlink $$f.$@` bin/$$f; rm $$f.$@; done
 
 test: build
 	$(MAKE) -s -C unit_tests
@@ -33,7 +34,7 @@ all: build test
 
 clean:
 	ocamlbuild -clean
-	rm -f lib/*.a lib/*.cmxa lib/*.cmxs bin/*.cmxs
+	rm -f lib/*.a lib/*.cmxa lib/*.cmxs bin/*
 	$(MAKE) -C unit_tests clean
 	$(MAKE) -C scripts clean
 	$(MAKE) -C doc/tutorial clean
