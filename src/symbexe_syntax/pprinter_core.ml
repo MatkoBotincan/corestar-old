@@ -74,11 +74,12 @@ let pp_stmt_core (ppf: Format.formatter) : core_statement -> unit =
       Format.fprintf ppf "nop;"
   | Label_stmt_core l ->  
       Format.fprintf ppf "label %s;" l 
-  | Assignment_core (v,spec,e)-> 
+  | Assignment_core {call_rets=v; call_spec=spec; call_args=e}-> 
       Format.fprintf ppf "assign %a@ @[%a@]@[(%a)@];"
 	(fun ppf v -> match v with [] -> () | _ -> Format.fprintf ppf "%a@ :=@ " variable_list2str v) v	
 	spec2str spec
 	string_args_list e
+  | Call_core _ -> failwith "todo"
   | Goto_stmt_core l ->
       Format.fprintf ppf 
 	"goto %a;"  

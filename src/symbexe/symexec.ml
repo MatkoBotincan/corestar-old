@@ -534,7 +534,7 @@ and execute_core_stmt
 
     | Nop_stmt_core  -> execs_one n [sheap]
 
-    | Assignment_core (vl, spec, il) -> 
+    | Assignment_core {call_rets=vl; call_spec=spec; call_args=il} -> 
       ( 
         let hs = call_jsr_static sheap spec il n in
         let abort =
