@@ -16,8 +16,13 @@ Building on *nix / Mac OSX / Cygwin
 
 Use the standard incantation.
   ./configure --prefix DIR
-  make
   make install
+
+And then run, assuming DIR/bin is in your path.
+  corestar
+
+Optionally, run the tests to make sure all is OK.
+  make test
 
 
 Dependencies:
@@ -25,7 +30,6 @@ Dependencies:
 * OCaml >=3.11
   http://caml.inria.fr/download.en.html
   Debian / Ubuntu: ocaml, ocaml-native-compilers
-
 
 
 Building on Win32 (native)
