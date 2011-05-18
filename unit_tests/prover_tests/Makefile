@@ -1,5 +1,7 @@
 TESTS=$(wildcard *_test)
 
+SHELL=/bin/bash
+
 test: $(TESTS)
 
 $(TESTS): %_test:
