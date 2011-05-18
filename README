@@ -1,11 +1,8 @@
-The coreStar Verification System
-================================
+The coreStar Verification Framework
+===================================
 
 coreStar is a highly-customisable automatic generic core symbolic execution 
 engine for analysis and verification with separation logic.
-
-There is a tutorial for the tool here:
-   ./doc/tutorial/corestartut.pdf
 
 For more information, see http://www.jstarverifier.org
 
