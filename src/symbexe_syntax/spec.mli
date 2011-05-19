@@ -38,6 +38,7 @@ type spec = {
 val mk_spec :
   Psyntax.pform -> Psyntax.pform -> excep_post -> spec
 val spec2str : Format.formatter -> spec -> unit
+val specSet2str : Format.formatter -> spec HashSet.t -> unit
 val pprinter_core_spec2str : spec -> string
 val name_ret_v1 : string
 val ret_v1 : Vars.var

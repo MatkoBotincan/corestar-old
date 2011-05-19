@@ -11,10 +11,18 @@
       LICENSE.txt
  ********************************************************)
 
+
+
 type call_core = {
   call_rets : Vars.var list;
   call_args : Psyntax.args list;
-  call_spec : Spec.spec
+  call_spec : Spec.spec HashSet.t
+}
+
+type 'a procedure = {
+  proc_name : string;
+  proc_spec : Spec.spec;
+  proc_body : 'a
 }
 
 type core_statement =
@@ -23,9 +31,7 @@ type core_statement =
   | Assignment_core of call_core
   | Call_core of string * call_core
   | Goto_stmt_core of string list
-  | Throw_stmt_core of Psyntax.args
   | End
-type symb_question =
-    Specification of string * Spec.spec * core_statement list
+type symb_question = core_statement list procedure
 type symb_test =
   | SpecTest of string * Spec.spec * core_statement list * bool

@@ -414,7 +414,10 @@ core_stmt:
   | END  { End }
   | NOP  { Nop_stmt_core }
   | ASSIGN core_assn_args spec L_PAREN term_npv_list R_PAREN  
-    { Assignment_core {call_rets=$2; call_spec=$3; call_args=$5} } 
+    { Assignment_core { 
+        call_rets=$2; 
+        call_spec=HashSet.singleton $3; 
+        call_args=$5} } 
   | GOTO label_list { Goto_stmt_core $2 } 
   | LABEL IDENTIFIER  { Label_stmt_core $2 }
 ;
@@ -451,7 +454,8 @@ test_file:
 ;
 
 symb_question: 
-  | SPECIFICATION identifier COLON spec QUESTIONMARK core_stmt_list  {Specification($2,$4,$6)}
+  | SPECIFICATION identifier COLON spec QUESTIONMARK core_stmt_list  
+    {{proc_name=$2; proc_spec=$4; proc_body=$6}}
 ;
 
 symb_test: 

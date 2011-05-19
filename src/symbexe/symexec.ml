@@ -536,6 +536,7 @@ and execute_core_stmt
 
     | Assignment_core {call_rets=vl; call_spec=spec; call_args=il} -> 
       ( 
+        let spec = HashSet.choose spec in
         let hs = call_jsr_static sheap spec il n in
         let abort =
           match !exec_type with
@@ -555,8 +556,6 @@ and execute_core_stmt
           let hs = add_id_formset_edge (snd sheap) (Debug.toString Pprinter_core.pp_stmt_core n.skind) hs n in
           execs_one n hs
       )
-
-    | Throw_stmt_core _ -> assert  false 
 
     | End -> 
       (match !exec_type with
