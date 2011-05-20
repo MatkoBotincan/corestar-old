@@ -6,14 +6,14 @@ endif
 export CORESTAR_HOME
 
 SRC_DIRS=src
-MAINS=corestar test_symb test_logic
+MAINS=alt_abd corestar test_symb test_logic
 LIBS=dynlink str unix
 
 # section that shouldn't change often
 
 SHELL=/bin/bash
 SRC_SUBDIRS=$(addsuffix .subdirs,$(SRC_DIRS))
-OCAMLBUILD=ocamlbuild `cat $(SRC_SUBDIRS)` $(addprefix -lib ,$(LIBS))
+OCAMLBUILD=ocamlbuild -cflag -dtypes `cat $(SRC_SUBDIRS)` $(addprefix -lib ,$(LIBS))
 
 build: native
 
