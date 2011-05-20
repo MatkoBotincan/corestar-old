@@ -13,7 +13,8 @@ LIBS=dynlink str unix
 
 SHELL=/bin/bash
 SRC_SUBDIRS=$(addsuffix .subdirs,$(SRC_DIRS))
-OCAMLBUILD=ocamlbuild `cat $(SRC_SUBDIRS)` $(addprefix -lib ,$(LIBS))
+OCAMLBUILD=ocamlbuild -cflag -dtypes \
+					 `cat $(SRC_SUBDIRS)` $(addprefix -lib ,$(LIBS))
 
 build: native
 

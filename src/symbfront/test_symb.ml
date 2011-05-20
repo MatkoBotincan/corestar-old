@@ -14,11 +14,11 @@
 
 (* This file is a front end to the symbolic execution *)
 
-open List
-open Printf
 open Core
-open Pprinter_core
+open Format
+open List
 open Load_logic
+open Pprinter_core
 open Psyntax
 
 let question_file_name = ref "";;
@@ -41,13 +41,15 @@ let arg_list = Config.args_default @
 let main () : unit = 
   let usage_msg = "Usage: -l <logic_file_name>  -a <abstraction_file_name>  -f <question_file_name>" in 
   Arg.parse arg_list (fun s ->()) usage_msg;
-
-  if !question_file_name="" then 
-    printf "Question file not specified. Can't continue....\n %s \n" usage_msg
-  else if !logic_file_name="" then
-    printf "Logic file name not specified. Can't continue....\n %s \n" usage_msg
-  else if !absrules_file_name="" then
-    printf "Abstraction rules file name not specified. Can't continue....\n %s \n" usage_msg
+  let args_ok, check_fn = let x = ref false in x, fun (f, m) ->
+    if f = "" then eprintf "@[%s file name missing@." m;
+    x := false in
+  List.iter check_fn [
+    (!question_file_name, "Question");
+    (!logic_file_name, "Logic");
+    (!absrules_file_name, "Abstraction rules")];
+  if not !args_ok then
+    printf "@[ %s@\n@]" usage_msg
   else
     if !Config.smt_run then Smt.smt_init(); 
     (* Load abstract interpretation plugins *)
@@ -64,18 +66,17 @@ let main () : unit =
           Lexer.token 
           !question_file_name 
           "Test" in
+    printf "@[";
     List.iter (
-    fun question ->
-      match question with 
-      | Core.SpecTest (mname,spec,core,result) ->
-        let cfg = map Cfg_core.mk_node core in 
-  	(match (Symexec.verify mname cfg spec lo abs_rules), result with 
-  	  true,true | false,false -> Format.printf "."
-  	| true,false -> Format.printf "Test failed!" 
-  	| false,true -> Format.printf "Test failed!" 
-  	)
-    ) question_list
+    function Core.SpecTest (mname,spec,core,result) ->
+      let cfg = map Cfg_core.mk_node core in
+      if Symexec.verify mname cfg spec lo abs_rules = result
+      then printf "."
+      else printf "@\nTest %s wrongly %s.@\n" mname
+        (if result then "fails" else "passes")
+    ) question_list;
+    printf "@]"
 
-
-
-let _ = main ()
+let _ =
+  System.set_signal_handlers ();
+  main ()
