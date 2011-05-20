@@ -48,17 +48,18 @@ let main () =
       fprintf logf "@[<4>Parsing tests in@ %s.@." !program_file_name;
     let test_list  = Parser.test_file Lexer.token (Lexing.from_string s) in
     if log log_phase then fprintf logf "@[<4>Parsed@ %s.@." !program_file_name;
+    printf "@[";
     List.iter (
     fun test ->
       match test with 
     | Psyntax.TImplication (heap1,heap2,result) ->
 	(*Format.printf "Check implication\n %s\n ===> \n %s\n" (Plogic.string_form heap1) (Plogic.string_form heap2);*)
 	(match (Sepprover.implies_opt logic (Sepprover.convert heap1) heap2), result with 
-	  true,true | false,false -> Format.printf "."
-	| true,false -> Format.printf "Test failed! Unsound as proved @\n@ %a@\n@ ===> @\n%a@\n " 
+	  true,true | false,false -> printf "."
+	| true,false -> printf "@[Test failed!@ Unsound as proved @\n@ %a@\n@ ===> @\n%a@\n@] "
 	      Psyntax.string_form heap1 
 	      Psyntax.string_form heap2
-	| false,true -> Format.printf "Test@ failed!@ Could@ not@ prove@ @\n@ %a@\n ===> @\n%a@\n " 
+	| false,true -> printf "@[Test@ failed!@ Could@ not@ prove@ @\n@ %a@\n ===> @\n%a@\n@] "
 	      Psyntax.string_form heap1 
 	      Psyntax.string_form heap2
 	)
@@ -68,37 +69,37 @@ let main () =
 	    (Sepprover.convert heap1) heap2 in 
 	begin 
 	  match x with 
-	  None -> Format.printf "Incorrect: cannot find frame. @\n%a@\n ===> @\n%a@\n" Psyntax.string_form heap1  Psyntax.string_form heap2
+	  None -> printf "@[Incorrect: cannot find frame. @\n%a@\n ===> @\n%a@\n@]" Psyntax.string_form heap1  Psyntax.string_form heap2
 	| Some x -> 
-	if Sepprover.implies_list x result then Format.printf "."
+	if Sepprover.implies_list x result then printf "."
 	else (
-	  Format.printf "Incorrect frame for:@\n%a@\n ===> @\n%a@\n"
+          printf "@[Incorrect frame for:@\n%a@\n ===> @\n%a@\n@]"
 	      Psyntax.string_form heap1 
 	      Psyntax.string_form heap2;
 	  List.iter 
 	      (fun form -> 
-		Format.printf "Resulted in frames:@\n %a@\n" Sepprover.string_inner_form form) x;
-	  Format.printf "Was expecting:@\n%a@\n" Psyntax.string_form result
+                printf "@[Resulted in frames:@\n %a@\n@]" Sepprover.string_inner_form form) x;
+          printf "@[Was expecting:@\n%a@\n@]" Psyntax.string_form result
 	 )
 	end
     | Psyntax.TAbs (heap1,result)  -> 
 	let x = Sepprover.abs_opt logic (Sepprover.convert heap1) in
-	if Sepprover.implies_list x result then Format.printf "."
+	if Sepprover.implies_list x result then printf "."
 	else (
-	  Format.printf "Incorrect Abstraction for:@\n%a@\n "
+          printf "@[Incorrect Abstraction for:@\n%a@\n@] "
 	      Psyntax.string_form heap1;
 	  List.iter 
 	      (fun form -> 
-		Format.printf "Resulted in forms:@\n %a@\n" Sepprover.string_inner_form form) x;
-	  Format.printf "Was expecting:@\n%a@\n" Psyntax.string_form result
+                printf "@[Resulted in forms:@\n %a@\n@]" Sepprover.string_inner_form form) x;
+          printf "@[Was expecting:@\n%a@\n@]" Psyntax.string_form result
 	 )	
     | Psyntax.TInconsistency (heap1,result) ->
 	(match Sepprover.inconsistent_opt logic (Sepprover.convert heap1), result with 
 	  true, true 
-	| false,false -> Format.printf "."
-	| true,false -> Format.printf "Test failed! Prover found@ %a@ inconsistent, test said consistent.@\n" 
+	| false,false -> printf "."
+	| true,false -> printf "@[Test failed! Prover found@ %a@ inconsistent, test said consistent.@\n@]" 
 	      Psyntax.string_form heap1
-	| false,true -> Format.printf "Test failed! Prover could not prove@ %a@ inconsistent.@\n" 
+	| false,true -> printf "@[Test failed! Prover could not prove@ %a@ inconsistent.@\n@]" 
 	      Psyntax.string_form heap1
 	);
     | Psyntax.TEqual (heap,arg1,arg2,result) -> ()
@@ -106,6 +107,7 @@ let main () =
 	then Format.printf("Equal!\n\n") else Format.printf("Not equal!\n\n")*)
     )
     test_list;
+    printf "@]";
     if log log_phase then fprintf logf "@[Done.@."
 
 
