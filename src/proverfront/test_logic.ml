@@ -37,6 +37,7 @@ let main () =
     printf "Logic file name not specified. Can't continue....@\n %s @\n" usage_msg
   else 
     if !Config.smt_run then Smt.smt_init();
+    if log log_phase then fprintf logf "@[Done initializing SMT.@.";
     (* Load abstract interpretation plugins *)
     List.iter (fun file_name -> Plugin_manager.load_plugin file_name) !Config.abs_int_plugins;
 
@@ -103,8 +104,11 @@ let main () =
     | Psyntax.TEqual (heap,arg1,arg2,result) -> ()
 (*	if Prover.check_equal logic heap arg1 arg2 
 	then Format.printf("Equal!\n\n") else Format.printf("Not equal!\n\n")*)
-  )
-      test_list
+    )
+    test_list;
+    if log log_phase then fprintf logf "@[Done.@."
 
 
-let _ = main ()
+let _ =
+  System.set_signal_handlers ();
+  main ()

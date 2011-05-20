@@ -12,13 +12,15 @@
  ********************************************************)
  
 
-open Psyntax
 open Clogic
-open Cterm
 open Congruence
-open Unix
+open Cterm
+open Debug
+open Format
 open List
+open Psyntax
 open Smtsyntax
+open Unix
 
 exception SMT_error of string
 exception SMT_fatal_error
@@ -36,7 +38,7 @@ let smt_memo = Hashtbl.create 1;;
 let smt_onstack = ref [[]];; 
 
 
-let smt_init () : unit = 
+let smt_init () : unit =
   let path = ( if (!Config.solver_path <> "") then !Config.solver_path 
                else System.getenv "JSTAR_SMT_PATH")
   in 
@@ -46,7 +48,9 @@ let smt_init () : unit =
       begin
         if Config.smt_debug() then Format.printf "Initialising SMT@\n"; 
         let args = System.getenv "JSTAR_SMT_ARGUMENTS" in 
-        let command = Filename.quote path ^ " " ^ args in 
+        let command = Filename.quote path ^ " " ^ args in
+        if log log_phase then
+          fprintf logf "@[execute <%s>@." command;
         let o, i, e = Unix.open_process_full command (environment()) in 
         smtout := o;  smtin := i;  smterr := e;
         smtout_lex := Lexing.from_channel !smtout; 
