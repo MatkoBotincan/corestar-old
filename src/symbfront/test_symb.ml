@@ -42,7 +42,7 @@ let main () : unit =
   let usage_msg = "Usage: -l <logic_file_name>  -a <abstraction_file_name>  -f <question_file_name>" in 
   Arg.parse arg_list (fun s ->()) usage_msg;
   let args_ok, check_fn = let x = ref false in x, fun (f, m) ->
-    if f = "" then eprintf "@[%s file name missing@." m;
+    if f = "" then eprintf "@[%s file name missing.@." m;
     x := false in
   List.iter check_fn [
     (!question_file_name, "Question");
@@ -50,7 +50,7 @@ let main () : unit =
     (!absrules_file_name, "Abstraction rules")];
   if not !args_ok then
     printf "@[ %s@\n@]" usage_msg
-  else
+  else begin
     if !Config.smt_run then Smt.smt_init(); 
     (* Load abstract interpretation plugins *)
     List.iter (fun file_name -> Plugin_manager.load_plugin file_name) !Config.abs_int_plugins;
@@ -76,6 +76,7 @@ let main () : unit =
         (if result then "fails" else "passes")
     ) question_list;
     printf "@]"
+  end
 
 let _ =
   System.set_signal_handlers ();
