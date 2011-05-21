@@ -83,5 +83,6 @@ let main () : unit =
           specs
       ) question_list
 
-
-let _ = main ()
+let _ =
+  System.set_signal_handlers ();
+  main ()
