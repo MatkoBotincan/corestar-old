@@ -33,12 +33,12 @@
  * typically be put in functions starting with "check_". Then they should be
  * called by using the laziness of the if statement and that of boolean and.
  *    if safe then check_inv data
- * The checking function is suposed to raise an exception ar to assert if a
+ * The checking function is suposed to raise an exception or to assert if a
  * problem is detected.
  *
  * Guidelines for logging. The typical logging code is
  *    if log log_category then
- *      fprintf logf "Some message.@."
+ *      fprintf logf "@[Some message.@."
  * assuming that modules Debug and Format are open. Note that each log message
  * starts by opening a box ("@[") and finishes by flushing, closing boxes and
  * going to a new line ("@."). The first complication that may appear is that
@@ -71,14 +71,14 @@ open Format
 
 let safe = true
 
-let log_specs = 1 lsl 0
-let log_phase = 1 lsl 1
-let log_load = 1 lsl 2
-let log_prove = 1 lsl 3
-let log_exec = 1 lsl 4
-let log_logic = 1 lsl 5
+let log_exec = 1 lsl 0
+let log_load = 1 lsl 1
+let log_logic = 1 lsl 2
+let log_phase = 1 lsl 3
+let log_prove = 1 lsl 4
+let log_specs = 1 lsl 5
 
-let log_active = 0 
+let log_active = 0
   (* -1 means all, 0 means one, in general use lor *)
 
 let log x = log_active land x <> 0

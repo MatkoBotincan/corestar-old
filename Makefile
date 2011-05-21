@@ -13,7 +13,8 @@ LIBS=dynlink str unix
 
 SHELL=/bin/bash
 SRC_SUBDIRS=$(addsuffix .subdirs,$(SRC_DIRS))
-OCAMLBUILD=ocamlbuild -cflag -dtypes `cat $(SRC_SUBDIRS)` $(addprefix -lib ,$(LIBS))
+OCAMLBUILD=ocamlbuild -cflag -dtypes \
+					 `cat $(SRC_SUBDIRS)` $(addprefix -lib ,$(LIBS))
 
 build: native
 
@@ -27,10 +28,10 @@ test-native test-byte: test-%: %
 	$(MAKE) -s -C unit_tests
 
 doc:
-	$(MAKE) -C doc/tutorial
+	$(MAKE) -C doc/tutorial      		# DEV
 
 scripts:
-	$(MAKE) -C scripts
+	$(MAKE) -C scripts							# DEV
 
 all: build test
 
@@ -38,8 +39,8 @@ clean:
 	ocamlbuild -clean
 	rm -f lib/*.a lib/* bin/* *.subdirs
 	$(MAKE) -C unit_tests clean
-	$(MAKE) -C scripts clean
-	$(MAKE) -C doc/tutorial clean
+	$(MAKE) -C scripts clean       	# DEV
+	$(MAKE) -C doc/tutorial clean  	# DEV
 
 %.subdirs: %
 	ls -F $*/ | grep / | sed "s./.." | sed "s.^.-I $*/." > $*.subdirs

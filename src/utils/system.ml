@@ -100,6 +100,10 @@ let is_file ext fn =
   Sys.file_exists fn && not (Sys.is_directory fn) &&
   StringH.ends_with (String.lowercase ext) (String.lowercase fn)
 
+let set_signal_handlers () =
+  let old = Sys.signal Sys.sigpipe Sys.Signal_ignore in
+  assert (old = Sys.Signal_default)
+
 (* TODO(rgrig): Thee should probably depend on the terminal. *)
 (* TODO(rgrig): Is there a (nice) ncurses ocaml inerface? *)
 let terminal_red = "\x1B[1;31m"

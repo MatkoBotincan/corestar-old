@@ -85,6 +85,9 @@ val is_executable_available : string -> bool
  *)
 val is_file : string -> string -> bool
 
+(** Ignores signals that shouldn't stop corestar. *)
+val set_signal_handlers : unit -> unit
+
 val terminal_red : string
 val terminal_green : string
 val terminal_white : string
