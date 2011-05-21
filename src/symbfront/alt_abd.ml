@@ -2,15 +2,7 @@
 
 open Format
 module C = Core
-
-type cfg_vertex =
-    Assign_cfg of C.call_core
-  | Call_cfg of string * C.call_core
-
-module Cfg = Graph.Imperative.Digraph.Abstract 
-  (struct type t = cfg_vertex end)
-module CfgH = Graph.Imperative.Digraph.Abstract 
-  (struct type t = C.core_statement end)
+module G = Cfg
 
 let map_proc_body f x = { x with C.proc_body = f x.C.proc_body }
 
@@ -18,14 +10,14 @@ let parse fn =
   System.parse_file Parser.symb_question_file Lexer.token fn "core"
 
 let mk_intermediate_cfg cs = 
-  let g = CfgH.create () in
+  let g = G.CfgH.create () in
   let labels = Hashtbl.create 13 in
   let gotos = HashSet.create 13 in
   let miv piv s = (* make intermediate vertex *)
-    let civ = CfgH.V.create s in
-    CfgH.add_vertex g civ;
+    let civ = G.CfgH.V.create s in
+    G.CfgH.add_vertex g civ;
     (match piv with
-      | Some piv -> CfgH.add_edge g piv civ
+      | Some piv -> G.CfgH.add_edge g piv civ
       | None -> ());
     match s with
       | C.Goto_stmt_core ls -> HashSet.add gotos (civ, ls); None
@@ -33,12 +25,37 @@ let mk_intermediate_cfg cs =
       | _ -> Some civ in
   ignore (List.fold_left miv None cs);
   let ages (v, ls) = (* add goto edges *)
-    List.iter (fun l -> CfgH.add_edge g v (Hashtbl.find labels l)) ls in
+    List.iter (fun l -> G.CfgH.add_edge g v (Hashtbl.find labels l)) ls in
   HashSet.iter ages gotos;
   g
 
 let simplify_cfg g =
-  failwith "todo"
+  let sg = G.Cfg.create () in
+  let node_stack = ref [] in
+  let push_node v = node_stack := v :: !node_stack in
+  let pop_node () =
+    let v :: vs = !node_stack in
+    node_stack := vs in
+  let peek_node () = List.hd !node_stack in
+  let push_rep v rv =
+    G.Cfg.add_vertex sg rv;
+    G.Cfg.add_edge sg (peek_node ()) rv;
+    push_node rv in
+  let pop_rep = pop_node in
+  let pre v = match G.CfgH.V.label v with
+      C.Assignment_core call -> 
+	push_rep v (G.Cfg.V.create (G.Assign_cfg call))
+    | C.Call_core (fname, call) ->
+	push_rep v (G.Cfg.V.create (G.Call_cfg (fname, call))) 
+    | _ -> () in
+  let post v = match G.CfgH.V.label v with
+      C.Assignment_core call -> 
+	pop_rep ()
+    | C.Call_core (fname, call) ->
+	pop_rep ()
+    | _ -> () in
+  G.Dfs.iter ~pre:pre ~post:post g;
+  sg
 
 let mk_cfg cs = 
   let g = mk_intermediate_cfg cs in
@@ -50,9 +67,18 @@ let interpret gs =
   List.iter f gs
 (*   failwith "todo" *)
 
+let output_Cfg { C.proc_name=n; C.proc_spec=_; C.proc_body=g } =
+  G.output_Cfg (n ^ "_Cfg.dot") g
+
+let output_CfgH { C.proc_name=n; C.proc_spec=_; C.proc_body=g } =
+  G.output_CfgH (n ^ "_CfgH.dot") g
+
 let main f =
   let ps = parse f in
+  let igs = List.map (map_proc_body mk_intermediate_cfg) ps in
+  List.iter output_CfgH igs;
   let gs = List.map (map_proc_body mk_cfg) ps in
+  List.iter output_Cfg gs;
   interpret gs
 
 let _ =

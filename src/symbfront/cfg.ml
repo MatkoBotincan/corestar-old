@@ -1,3 +1,4 @@
+open Format
 module C = Core
 
 type cfg_vertex =
@@ -27,10 +28,10 @@ module Dot_Cfg = Graph.Graphviz.Dot(Display_Cfg)
 module Display_CfgH = struct
   let vertex_name v = match CfgH.V.label v with
       C.Nop_stmt_core -> "NOP"
-    | C.Label_stmt_core s -> "Label " ^ s
+    | C.Label_stmt_core s -> "Label:" ^ s
     | C.Assignment_core _ -> "Assign"
     | C.Call_core (fname, _) -> "Call " ^ fname
-    | C.Goto_stmt_core ss -> "Goto: " ^ (String.concat ", " ss)
+    | C.Goto_stmt_core ss -> "Goto:" ^ (String.concat ", " ss)
     | C.End -> "End"
   let graph_attributes _ = []
   let default_vertex_attributes _ = []
@@ -45,6 +46,14 @@ module Display_CfgH = struct
 end
 module Dot_CfgH = Graph.Graphviz.Dot(Display_CfgH)
   
-let output_Cfg g = Dot_Cfg.output_graph stdout g
+let fileout file_name f =
+  try
+    let o = open_out file_name in
+      f o; close_out o
+  with _ -> eprintf "@[Could not create file %s@." file_name
 
-let output_CfgH g = Dot_CfgH.output_graph stdout g
+let output_Cfg file_name g = 
+  fileout file_name (fun o -> Dot_Cfg.output_graph o g)
+
+let output_CfgH file_name g =
+  fileout file_name (fun o -> Dot_CfgH.output_graph o g)
