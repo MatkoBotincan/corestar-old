@@ -563,6 +563,8 @@ and execute_core_stmt
         ignore (add_edge_with_proof (snd sheap) (add_good_node ("Exit")) ExitE "exit")
       | _ -> ());
       execs_one n [sheap]
+
+    | Call_core _ -> failwith "TODO: Call_core"
     )
   )
 
