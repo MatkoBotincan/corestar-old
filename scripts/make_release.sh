@@ -45,11 +45,10 @@ cd "$ROOT"
 try make clean
 for f in $COPY; do cp -r "$f" "$HERE/$DIR"; done
 grep -v -e "\<DEV\>" Makefile > "$HERE/$DIR/Makefile"
-try make doc
-mkdir -p "$HERE/$DIR/doc"
-try cp doc/tutorial/jstartut.pdf "$HERE/$DIR/doc/tutorial.pdf"
 mkdir -p "$HERE/$DIR/bin"
 
 cd "$HERE"
 rm -f "$TAR"
 tar caf "$TAR" "$DIR"
+
+rm -rf "$DIR"
