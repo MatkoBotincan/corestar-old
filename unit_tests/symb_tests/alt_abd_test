@@ -1,0 +1,6 @@
+Specification Test1:
+{Emp}{Emp} ?
+nop;
+label loop;
+goto loop;
+end;
