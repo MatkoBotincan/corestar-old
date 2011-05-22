@@ -31,17 +31,12 @@ let mk_intermediate_cfg cs =
 
 let simplify_cfg g =
   let sg = G.Cfg.create () in
-  let node_stack = ref [] in
-  let push_node v = node_stack := v :: !node_stack in
-  let pop_node () =
-    let v :: vs = !node_stack in
-    node_stack := vs in
-  let peek_node () = List.hd !node_stack in
+  let node_stack = Stack.create () in
   let push_rep v rv =
     G.Cfg.add_vertex sg rv;
-    G.Cfg.add_edge sg (peek_node ()) rv;
-    push_node rv in
-  let pop_rep = pop_node in
+    G.Cfg.add_edge sg (Stack.top node_stack) rv;
+    Stack.push rv node_stack in
+  let pop_rep () = ignore (Stack.pop node_stack) in
   let pre v = match G.CfgH.V.label v with
       C.Assignment_core call -> 
 	push_rep v (G.Cfg.V.create (G.Assign_cfg call))

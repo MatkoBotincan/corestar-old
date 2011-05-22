@@ -4,3 +4,12 @@ nop;
 label loop;
 goto loop;
 end;
+
+Specification Test2:
+{Emp}{Emp} ?
+nop;
+assign x := {Emp}{Emp} (y);
+label loop;
+assign x := {Emp}{Emp} ((x+y));
+goto loop;
+end;
