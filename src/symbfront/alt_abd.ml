@@ -32,21 +32,23 @@ let mk_intermediate_cfg cs =
 let simplify_cfg g =
   let sg = G.Cfg.create () in
   let node_stack = Stack.create () in
-  let push_rep v rv =
+  Stack.push None node_stack;
+  let push_rep rv =
     G.Cfg.add_vertex sg rv;
-    G.Cfg.add_edge sg (Stack.top node_stack) rv;
-    Stack.push rv node_stack in
+    match Stack.top node_stack with
+	Some v -> G.Cfg.add_edge sg v rv
+      | None -> ();
+    Stack.push (Some rv) node_stack in
   let pop_rep () = ignore (Stack.pop node_stack) in
   let pre v = match G.CfgH.V.label v with
       C.Assignment_core call -> 
-	push_rep v (G.Cfg.V.create (G.Assign_cfg call))
+	push_rep (G.Cfg.V.create (G.Assign_cfg call))
     | C.Call_core (fname, call) ->
-	push_rep v (G.Cfg.V.create (G.Call_cfg (fname, call))) 
+	push_rep (G.Cfg.V.create (G.Call_cfg (fname, call))) 
     | _ -> () in
   let post v = match G.CfgH.V.label v with
-      C.Assignment_core call -> 
-	pop_rep ()
-    | C.Call_core (fname, call) ->
+      C.Assignment_core _
+    | C.Call_core _ ->
 	pop_rep ()
     | _ -> () in
   G.Dfs.iter ~pre:pre ~post:post g;
