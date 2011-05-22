@@ -19,6 +19,12 @@ let map_option f l =
     | Some y -> y :: acc in
   List.rev (List.fold_left f' [] l)
 
+let option n s = function None -> n | Some x -> s x
+
+let rec iter_pairs f = function
+  | [] | [_] -> ()
+  | x :: ((y :: _) as xs) -> f x y; iter_pairs f xs
+
 let map_lift_exists f l
     =
   List.fold_right 
