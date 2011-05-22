@@ -4,6 +4,9 @@ module C = Core
 type cfg_vertex =
     Assign_cfg of C.call_core
   | Call_cfg of string * C.call_core
+  | Nop_cfg
+  (* NOTE: [Nop_cfg] gives some flexibility in choosing the shape of the graph.
+  For example, [Procedure] below assumes one start and one stop node. *)
 
 module Cfg = Graph.Imperative.Digraph.Abstract 
   (struct type t = cfg_vertex end)
@@ -11,10 +14,21 @@ module CfgH = Graph.Imperative.Digraph.Abstract
   (struct type t = C.core_statement end)
 module Dfs = Graph.Traverse.Dfs(CfgH)
 
+module MakeProcedure (Cfg : Graph.Sig.I ) = struct
+  type t =
+    { cfg : Cfg.t
+    ; start : Cfg.vertex
+    ; stop : Cfg.vertex }
+end
+
+module Procedure = MakeProcedure (Cfg)
+module ProcedureH = MakeProcedure (CfgH)
+
 module Display_Cfg = struct
   let vertex_name v = match Cfg.V.label v with
       Assign_cfg _ -> "Assign"
     | Call_cfg (fname, _) -> "Call " ^ fname
+    | Nop_cfg -> "nop"
   let graph_attributes _ = []
   let default_vertex_attributes _ = []
   let vertex_attributes _ = []
